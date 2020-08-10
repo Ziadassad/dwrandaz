@@ -24,6 +24,7 @@ class _ByDateState extends State<ByDate> {
   }
 
   String startDate = "2020-8-10";
+
   String endDate;
 
   @override
