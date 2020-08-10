@@ -1,7 +1,7 @@
 import 'package:dwrandaz/MainApp.dart';
 import 'package:flutter/material.dart';
-import 'package:adobe_xd/pinned.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Signin extends StatefulWidget {
   @override
@@ -10,11 +10,23 @@ class Signin extends StatefulWidget {
 
 class _SignInState extends State<Signin> {
 
+  SharedPreferences sharedPreferences;
   String email;
   String password;
 
   TextEditingController textEmail = TextEditingController();
   TextEditingController textPassword = TextEditingController();
+
+  initShared() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initShared();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +70,7 @@ class _SignInState extends State<Signin> {
               height: 3.8,
               decoration: BoxDecoration(
                 borderRadius:
-                    BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
                 color: const Color(0x1a6c63ff),
               ),
             ),
@@ -77,7 +89,7 @@ class _SignInState extends State<Signin> {
               height: 4.1,
               decoration: BoxDecoration(
                 borderRadius:
-                    BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
                 color: const Color(0xff6c63ff),
               ),
             ),
@@ -171,7 +183,7 @@ class _SignInState extends State<Signin> {
                       border: new OutlineInputBorder(
                         borderRadius: new BorderRadius.circular(25.0),
                         borderSide: new BorderSide(
-                          color: Colors.blue
+                            color: Colors.blue
                         ),
                       ),
                     ),
@@ -220,11 +232,13 @@ class _SignInState extends State<Signin> {
                           height: 0.8,
                         ),
                         textAlign: TextAlign.center,),
-                      onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MainApp()));
+                      onPressed: () {
                         bool check = signin();
-                        if(check){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => MainApp()));
+                        if (check) {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => MainApp()),
+                                  (Route<dynamic> route) => false);
                         }
                       },
                     ),
@@ -240,6 +254,7 @@ class _SignInState extends State<Signin> {
 
   signin(){
     if(email == "ziad" && password == "ziad"){
+      sharedPreferences.setBool("login", true);
       return true;
     }
     else{
