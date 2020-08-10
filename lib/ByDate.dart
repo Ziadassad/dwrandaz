@@ -32,31 +32,67 @@ class _ByDateState extends State<ByDate> {
     return Stack(
       children: <Widget>[
         Container(
-          decoration: BoxDecoration(color: Colors.blue),
+          padding: EdgeInsets.only(top: 10),
+          decoration: BoxDecoration(
+              color: Colors.lightBlueAccent,
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(26),
+                  bottomRight: Radius.circular(26))),
           width: double.infinity,
           height: 100,
-          child: Row(
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.date_range),
-                onPressed: () {
-                  DatePicker.showDatePicker(context,
-                      showTitleActions: true,
-                      minTime: DateTime(2020, 8, 10), onChanged: (date) {
-                    setState(() {
-                      String date1 = date.toString();
-                      startDate = date1.substring(0, 10);
-                    });
-                  }, onConfirm: (date) {
-                    setState(() {
-                      String date1 = date.toString();
-                      startDate = date1.substring(0, 10);
-                    });
-                  }, currentTime: DateTime.now(), locale: LocaleType.en);
-                },
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Text(
+                        "Start Date",
+                        style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic),
+                      ),
+                      Row(
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.date_range),
+                            onPressed: () {
+                              dateTime();
+                            },
+                          ),
+                          Text(startDate),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: <Widget>[
+                      Text("End Date",
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic)),
+                      Row(
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.date_range),
+                            onPressed: () {
+                              dateTime();
+                            },
+                          ),
+                          Text(startDate),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              Text(startDate)
-            ],
+            ),
           ),
         ),
         FutureBuilder(
@@ -72,6 +108,26 @@ class _ByDateState extends State<ByDate> {
         ),
       ],
     );
+  }
+
+  dateTime() {
+    DatePicker.showDatePicker(context,
+        showTitleActions: true,
+        minTime: DateTime(2020, 8, 10),
+        onChanged: (date) {
+          setState(() {
+            String date1 = date.toString();
+            startDate = date1.substring(0, 10);
+          });
+        },
+        onConfirm: (date) {
+          setState(() {
+            String date1 = date.toString();
+            startDate = date1.substring(0, 10);
+          });
+        },
+        currentTime: DateTime.now(),
+        locale: LocaleType.en);
   }
 
   Widget itemCard(snapshot) {
@@ -101,7 +157,7 @@ renderCard(data, int position) {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             Text(
-              'Team :  ${data[position].nameTeam}',
+              'Team  :  ${data[position].nameTeam}',
               style: TextStyle(fontSize: 20),
             ),
             Text(
@@ -109,7 +165,7 @@ renderCard(data, int position) {
               style: TextStyle(fontSize: 20),
             ),
             Text(
-              '   Date :    ${data[position].date}',
+              'Date    :  ${data[position].date}',
               style: TextStyle(fontSize: 20),
             )
           ],
@@ -119,7 +175,18 @@ renderCard(data, int position) {
 
 colorTeam(String str) {
   switch (str) {
-    case "":
+    case "Team A":
+      return Colors.redAccent;
+      break;
+    case "Team B":
+      return Colors.yellow;
+      break;
+    case "Team C":
+      return Colors.cyan;
+      break;
+    case "Team D":
+      return Colors.green;
+      break;
   }
 }
 
