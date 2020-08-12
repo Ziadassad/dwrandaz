@@ -31,223 +31,239 @@ class _SignInState extends State<Signin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Transform.translate(
-            offset: Offset(140, 320),
-            child: Text(
-              'Sign In',
-              style: TextStyle(
-                  color: Colors.blue[800],
-                  fontSize: 40,
-                  fontStyle: FontStyle.italic),
-            ),
-          ),
-
-          Transform.translate(
-            offset: Offset(256.5, 246.9),
-            child: Container(
-              width: 49.8,
-              height: 11.1,
-              decoration: BoxDecoration(
-                borderRadius:
-                    BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
-                color: const Color(0x1a6c63ff),
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(335.0, 253.7),
-            child: SvgPicture.string(
-              _svg_37wmpp,
-              allowDrawingOutsideViewBox: true,
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(30.0, 261.6),
-            child: Container(
-              width: 22.0,
-              height: 3.8,
-              decoration: BoxDecoration(
-                borderRadius:
-                BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
-                color: const Color(0x1a6c63ff),
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(30.6, 251.2),
-            child: SvgPicture.string(
-              _svg_lni6d0,
-              allowDrawingOutsideViewBox: true,
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(69.5, 268.5),
-            child: Container(
-              width: 24.0,
-              height: 4.1,
-              decoration: BoxDecoration(
-                borderRadius:
-                BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
-                color: const Color(0xff6c63ff),
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(75.4, 63.4),
-            child: SvgPicture.string(
-              _svg_z7ubm3,
-              allowDrawingOutsideViewBox: true,
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(275.4, 65.7),
-            child: SizedBox(
-              width: 28.0,
-              height: 25.0,
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
               child: Stack(
                 children: <Widget>[
-                  SvgPicture.string(
-                    _svg_4l120t,
-                    allowDrawingOutsideViewBox: true,
+                  Transform.translate(
+                    offset: Offset(70, 320),
+                    child: Text(
+                      'Sign In',
+                      style: TextStyle(
+                          color: Colors.blue[800],
+                          fontSize: 40,
+                          fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(206.5, 246.9),
+                    child: Container(
+                      width: 49.8,
+                      height: 11.1,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                        color: const Color(0x1a6c63ff),
+                      ),
+                    ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(285.0, 253.7),
+                    child: SvgPicture.string(
+                      _svg_37wmpp,
+                      allowDrawingOutsideViewBox: true,
+                    ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(30.0, 261.6),
+                    child: Container(
+                      width: 22.0,
+                      height: 3.8,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                        color: const Color(0x1a6c63ff),
+                      ),
+                    ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(0.6, 251.2),
+                    child: SvgPicture.string(
+                      _svg_lni6d0,
+                      allowDrawingOutsideViewBox: true,
+                    ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(19.5, 268.5),
+                    child: Container(
+                      width: 24.0,
+                      height: 4.1,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                        color: const Color(0xff6c63ff),
+                      ),
+                    ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(25.4, 63.4),
+                    child: SvgPicture.string(
+                      _svg_z7ubm3,
+                      allowDrawingOutsideViewBox: true,
+                    ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(225.4, 65.7),
+                    child: SizedBox(
+                      width: 28.0,
+                      height: 25.0,
+                      child: Stack(
+                        children: <Widget>[
+                          SvgPicture.string(
+                            _svg_4l120t,
+                            allowDrawingOutsideViewBox: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(12.9, 149.1),
+                    child: Container(
+                      width: 1.1,
+                      height: 1.1,
+                      decoration: BoxDecoration(
+                        color: const Color(0xff6c63ff),
+                      ),
+                    ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(12.9, 149.1),
+                    child: Container(
+                      width: 1.1,
+                      height: 1.1,
+                      decoration: BoxDecoration(
+                        color: const Color(0x40000000),
+                      ),
+                    ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(106.8, 55.0),
+                    child: Container(
+                      width: 1.1,
+                      height: 1.3,
+                      decoration: BoxDecoration(
+                        color: const Color(0xff6c63ff),
+                      ),
+                    ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(106.8, 55.0),
+                    child: Container(
+                      width: 1.1,
+                      height: 1.3,
+                      decoration: BoxDecoration(
+                        color: const Color(0x40000000),
+                      ),
+                    ),
+                  ),
+                  Transform.translate(
+                    offset: Offset(12.9, 70.1),
+                    child: SvgPicture.string(
+                      _svg_l2lgol,
+                      allowDrawingOutsideViewBox: true,
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
-          Transform.translate(
-            offset: Offset(62.9, 149.1),
-            child: Container(
-              width: 1.1,
-              height: 1.1,
-              decoration: BoxDecoration(
-                color: const Color(0xff6c63ff),
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(62.9, 149.1),
-            child: Container(
-              width: 1.1,
-              height: 1.1,
-              decoration: BoxDecoration(
-                color: const Color(0x40000000),
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(156.8, 55.0),
-            child: Container(
-              width: 1.1,
-              height: 1.3,
-              decoration: BoxDecoration(
-                color: const Color(0xff6c63ff),
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(156.8, 55.0),
-            child: Container(
-              width: 1.1,
-              height: 1.3,
-              decoration: BoxDecoration(
-                color: const Color(0x40000000),
-              ),
-            ),
-          ),
-          Transform.translate(
-            offset: Offset(62.9, 70.1),
-            child: SvgPicture.string(
-              _svg_l2lgol,
-              allowDrawingOutsideViewBox: true,
-            ),
-          ),
 
-          // input sign in
-
-          Transform.translate(
-            offset: Offset(0, 400),
-            child: Container(
-              padding: EdgeInsets.all(20),
+            // input sign in
+            Container(
+              height: 500,
               child: Column(
                 children: <Widget>[
-                  TextFormField(
-                    controller: textEmail,
-                    onChanged: (string){
-                      email = string;
-                    },
-                    decoration: new InputDecoration(
-                      labelText: "Enter Email",
-                      fillColor: Colors.white,
-                      border: new OutlineInputBorder(
-                        borderRadius: new BorderRadius.circular(25.0),
-                        borderSide: new BorderSide(
-                            color: Colors.blue
-                        ),
+                  Transform.translate(
+                    offset: Offset(0, 200),
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        children: <Widget>[
+                          TextFormField(
+                            controller: textEmail,
+                            onChanged: (string) {
+                              email = string;
+                            },
+                            decoration: new InputDecoration(
+                              labelText: "Enter Email",
+                              fillColor: Colors.white,
+                              border: new OutlineInputBorder(
+                                borderRadius: new BorderRadius.circular(25.0),
+                                borderSide: new BorderSide(color: Colors.blue),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          TextFormField(
+                            controller: textPassword,
+                            onChanged: (string) {
+                              password = string;
+                            },
+                            decoration: new InputDecoration(
+                              labelText: "Enter Password",
+                              fillColor: Colors.white,
+                              border: new OutlineInputBorder(
+                                borderRadius: new BorderRadius.circular(25.0),
+                                borderSide: new BorderSide(color: Colors.blue),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Container(
+                            width: 24.0,
+                            height: 4.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(2.0),
+                              color: const Color(0xffbce0fd),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Container(
+                            width: 250,
+                            decoration: BoxDecoration(
+                              color: Colors.blue[800],
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: FlatButton(
+                              child: Text(
+                                'CONTINUE',
+                                style: TextStyle(
+                                  fontFamily: 'Arial',
+                                  fontSize: 15,
+                                  color: const Color(0xffffffff),
+                                  fontWeight: FontWeight.w700,
+                                  height: 0.8,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              onPressed: () {
+                                bool check = signin();
+                                if (check) {
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) => MainApp()),
+                                      (Route<dynamic> route) => false);
+                                }
+                              },
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),
-
-                  SizedBox(height: 20,),
-                  TextFormField(
-                    controller: textPassword,
-                    onChanged: (string){
-                      password = string;
-                    },
-                    decoration: new InputDecoration(
-                      labelText: "Enter Password",
-                      fillColor: Colors.white,
-                      border: new OutlineInputBorder(
-                        borderRadius: new BorderRadius.circular(25.0),
-                        borderSide: new BorderSide(
-                            color: Colors.blue
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 30,),
-                  Container(
-                    width: 24.0,
-                    height: 4.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(2.0),
-                      color: const Color(0xffbce0fd),
-                    ),
-                  ),
-                  SizedBox(height: 30,),
-                  Container(
-                    width: 250,
-                    decoration: BoxDecoration(
-                      color: Colors.blue[800],
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: FlatButton(
-                      child: Text('CONTINUE',
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 15,
-                          color: const Color(0xffffffff),
-                          fontWeight: FontWeight.w700,
-                          height: 0.8,
-                        ),
-                        textAlign: TextAlign.center,),
-                      onPressed: () {
-                        bool check = signin();
-                        if (check) {
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => MainApp()),
-                                  (Route<dynamic> route) => false);
-                        }
-                      },
-                    ),
-                  )
                 ],
               ),
-            ),
-          ),
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

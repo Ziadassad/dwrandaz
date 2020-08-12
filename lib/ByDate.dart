@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:http/http.dart' as http;
 
 class ByDate extends StatefulWidget {
   @override
@@ -10,22 +13,46 @@ class ByDate extends StatefulWidget {
 class _ByDateState extends State<ByDate> {
   List<Data> data = [];
 
-  Future<List<Data>> listData() async {
-    data.add(Data("Team A", "30", "8 / 6 /2020"));
-    data.add(Data("Team B", "53", "22 / 3 /2020"));
-    data.add(Data("Team C", "40", "12 / 4 /2020"));
-    data.add(Data("Team D", "20", "3 / 5 /2020"));
-    data.add(Data("Team A", "30", "8 / 6 /2020"));
-    data.add(Data("Team B", "53", "22 / 3 /2020"));
-    data.add(Data("Team C", "40", "12 / 4 /2020"));
-    data.add(Data("Team D", "20", "3 / 5 /2020"));
+  ScrollController _controller = ScrollController();
+  String url = "http://192.168.100.3:3000/get";
 
+  var json;
+  bool isLoad = true;
+
+  Future refresh() async {
+    data.clear();
+
+    var result = await http.get(url);
+    json = jsonDecode(result.body) as List<dynamic>;
+
+    json.forEach((element) {
+      data.add(Data(element['name'], element['salary'], element['date']));
+    });
+    setState(() {});
     return data;
   }
 
-  String startDate = "2020-8-10";
+  Future<List<Data>> loadData() async {
+    return data;
+//    data.add(Data("Team A", "30", "8 / 6 /2020"));
+//    data.add(Data("Team B", "53", "22 / 3 /2020"));
+//    data.add(Data("Team C", "40", "12 / 4 /2020"));
+//    data.add(Data("Team D", "20", "3 / 5 /2020"));
+//    data.add(Data("Team A", "30", "8 / 6 /2020"));
+//    data.add(Data("Team B", "53", "22 / 3 /2020"));
+//    data.add(Data("Team C", "40", "12 / 4 /2020"));
+//    data.add(Data("Team D", "20", "3 / 5 /2020"));
+  }
 
-  String endDate;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    refresh();
+    loadData();
+  }
+
+  String dropdownValue = 'AllDate';
 
   @override
   Widget build(BuildContext context) {
@@ -46,30 +73,58 @@ class _ByDateState extends State<ByDate> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Text(
-                        "Start Date",
-                        style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.italic),
-                      ),
-                      Row(
-                        children: <Widget>[
+                  dropdownValue == 'ByDate'
+                      ? Column(
+                          children: <Widget>[
+                            Text(
+                              "Start Date",
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.italic),
+                            ),
+                            Row(
+                              children: <Widget>[
                           IconButton(
                             icon: Icon(Icons.date_range),
                             onPressed: () {
-                              dateTime();
+                              dateTime(1);
                             },
                           ),
                           Text(startDate),
                         ],
                       ),
                     ],
-                  ),
+                  ) : Container(),
                   Column(
+                    children: <Widget>[
+                      DropdownButton<String>(
+                        value: dropdownValue,
+                        icon: Icon(Icons.arrow_downward),
+                        iconSize: 24,
+                        elevation: 16,
+                        style: TextStyle(color: Colors.deepPurple),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.deepPurpleAccent,
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            dropdownValue = newValue;
+                          });
+                        },
+                        items: <String>['AllDate', 'ByDate']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      )
+                    ],
+                  ),
+                  dropdownValue == 'ByDate' ? Column(
                     children: <Widget>[
                       Text("End Date",
                           style: TextStyle(
@@ -82,61 +137,92 @@ class _ByDateState extends State<ByDate> {
                           IconButton(
                             icon: Icon(Icons.date_range),
                             onPressed: () {
-                              dateTime();
+                              dateTime(2);
                             },
                           ),
-                          Text(startDate),
+                          Text(endDate),
                         ],
                       ),
                     ],
-                  ),
+                  ) : Container(),
                 ],
               ),
             ),
           ),
         ),
-        FutureBuilder(
-          future: listData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData) {
-              return itemCard(snapshot);
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
+        RefreshIndicator(
+          onRefresh: refresh,
+          child: FutureBuilder(
+            future: loadData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData) {
+                return itemCard(snapshot);
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
         ),
       ],
     );
   }
 
-  dateTime() {
+  String startDate = "2020-08-01";
+  String endDate = "2020-12-30";
+
+  dateTime(index) {
     DatePicker.showDatePicker(context,
         showTitleActions: true,
         minTime: DateTime(2020, 8, 10),
         onChanged: (date) {
           setState(() {
-            String date1 = date.toString();
-            startDate = date1.substring(0, 10);
+            if (index == 1) {
+              String date1 = date.toString();
+              startDate = date1.substring(0, 10);
+            } else {
+              String date1 = date.toString();
+              endDate = date1.substring(0, 10);
+            }
           });
         },
         onConfirm: (date) {
           setState(() {
-            String date1 = date.toString();
-            startDate = date1.substring(0, 10);
+            if (index == 1) {
+              String date1 = date.toString();
+              startDate = date1.substring(0, 10);
+            } else {
+              String date1 = date.toString();
+              endDate = date1.substring(0, 10);
+            }
           });
         },
         currentTime: DateTime.now(),
         locale: LocaleType.en);
+    print("yes");
   }
 
   Widget itemCard(snapshot) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10.0, 100, 10, 10),
       child: ListView.builder(
+          physics: AlwaysScrollableScrollPhysics(),
           itemCount: snapshot.data.length,
+          controller: _controller,
           itemBuilder: (context, position) {
-            return renderCard(snapshot.data, position);
+            DateTime oDate = DateTime.parse(
+                snapshot.data[position].date + " 13:27:00");
+            DateTime sDate = DateTime.parse(startDate);
+            DateTime eDate = DateTime.parse(endDate);
+            if (sDate.isBefore(oDate) && eDate.isAfter(oDate) &&
+                dropdownValue != 'AllDate') {
+              print("1");
+              return renderCard(snapshot.data, position);
+            }
+            else if (dropdownValue == 'AllDate') {
+              return renderCard(snapshot.data, position);
+            }
+            return Container();
           }),
     );
   }
@@ -197,4 +283,3 @@ class Data {
 
   Data(this.nameTeam, this.salary, this.date);
 }
-

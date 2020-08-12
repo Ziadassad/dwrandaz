@@ -1,5 +1,9 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:dwrandaz/ByDate.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class OverAll extends StatefulWidget {
   @override
@@ -7,17 +11,44 @@ class OverAll extends StatefulWidget {
 }
 
 class _OverAllState extends State<OverAll> {
-
   List<charts.Series<Task, String>> _seriesPieData;
 
-  Future _generateData() async{
+  String url = "http://192.168.100.3:3000/getOverAll";
+  List<Data> data = [];
+
+  double salaryTeamA = 0;
+  double salaryTeamB = 0;
+  double salaryTeamC = 0;
+  double salaryTeamD = 0;
+
+  Future _generateData() async {
+    data.clear();
+
+    var result = await http.get(url);
+    var json = jsonDecode(result.body) as List<dynamic>;
+
+    json.forEach((element) {
+      switch (element['name']) {
+        case "Team A":
+          salaryTeamA = salaryTeamA + int.parse(element['salary']);
+          break;
+        case "Team B":
+          salaryTeamB = salaryTeamB + int.parse(element['salary']);
+          break;
+        case "Team C":
+          salaryTeamC = salaryTeamC + int.parse(element['salary']);
+          break;
+        case "Team D":
+          salaryTeamD = salaryTeamD + int.parse(element['salary']);
+          break;
+      }
+    });
+
     var piedata = [
-      new Task('team A', 26.8, Color(0xff3366cc)),
-      new Task('team B', 8.3, Color(0xff990099)),
-      new Task('team C', 10.8, Color(0xff109618)),
-      new Task('team D', 15.6, Color(0xfffdbe19)),
-      new Task('team E', 19.2, Color(0xffff9900)),
-      new Task('team F', 10.3, Color(0xffdc3912)),
+      new Task('team A', salaryTeamA, Color(0xff3366cc)),
+      new Task('team B', salaryTeamB, Color(0xff990099)),
+      new Task('team C', salaryTeamC, Color(0xff109618)),
+      new Task('team D', salaryTeamD, Color(0xfffdbe19)),
     ];
     _seriesPieData.add(
       charts.Series(
@@ -38,7 +69,7 @@ class _OverAllState extends State<OverAll> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _generateData();
+    // _generateData();
     _seriesPieData = List<charts.Series<Task, String>>();
   }
   @override
@@ -64,8 +95,9 @@ class _OverAllState extends State<OverAll> {
                             animationDuration: Duration(seconds: 2),
                             behaviors: [
                               new charts.DatumLegend(
-                                outsideJustification: charts.OutsideJustification
-                                    .startDrawArea,
+                                outsideJustification: charts
+                                    .OutsideJustification
+                                    .middleDrawArea,
                                 horizontalFirst: false,
                                 desiredMaxRows: 2,
                                 cellPadding: new EdgeInsets.only(right: 4.0,
