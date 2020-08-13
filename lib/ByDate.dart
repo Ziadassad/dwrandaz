@@ -12,6 +12,7 @@ class ByDate extends StatefulWidget {
 
 class _ByDateState extends State<ByDate> {
   List<Data> data = [];
+  List<Data> filter = [];
 
   ScrollController _controller = ScrollController();
   String url = "http://192.168.100.3:3000/get";
@@ -28,12 +29,34 @@ class _ByDateState extends State<ByDate> {
     json.forEach((element) {
       data.add(Data(element['name'], element['salary'], element['date']));
     });
-    setState(() {});
-    return data;
+
+    filter.addAll(data);
+    setState(() {
+      Comparator<Data> sortBySalary = (a, b) => a.salary.compareTo(b.salary);
+      filter.sort(sortBySalary);
+      print(filter[0].salary);
+      if (dropdownSort == 'up to down') {
+        return filter;
+      }
+      else if (dropdownSort == 'down to up') {
+        return filter.reversed.toList();
+      }
+      else {
+        return data;
+      }
+    });
   }
 
   Future<List<Data>> loadData() async {
-    return data;
+    if (dropdownSort == 'up to down') {
+      return filter.reversed.toList();
+    }
+    else if (dropdownSort == 'down to up') {
+      return filter;
+    }
+    else {
+      return data;
+    }
 //    data.add(Data("Team A", "30", "8 / 6 /2020"));
 //    data.add(Data("Team B", "53", "22 / 3 /2020"));
 //    data.add(Data("Team C", "40", "12 / 4 /2020"));
@@ -53,33 +76,34 @@ class _ByDateState extends State<ByDate> {
   }
 
   String dropdownValue = 'AllDate';
+  String dropdownSort = 'ByDefault';
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.only(top: 10),
+          padding: EdgeInsets.only(top: 5),
           decoration: BoxDecoration(
               color: Colors.lightBlueAccent,
               borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(26),
                   bottomRight: Radius.circular(26))),
           width: double.infinity,
-          height: 100,
+          height: 120,
           child: Center(
             child: Padding(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   dropdownValue == 'ByDate'
                       ? Column(
-                          children: <Widget>[
-                            Text(
-                              "Start Date",
-                              style: TextStyle(
-                                  color: Colors.green,
+                    children: <Widget>[
+                      Text(
+                        "Start Date",
+                        style: TextStyle(
+                            color: Colors.green,
                                   fontSize: 17,
                                   fontWeight: FontWeight.bold,
                                   fontStyle: FontStyle.italic),
@@ -100,6 +124,7 @@ class _ByDateState extends State<ByDate> {
                   Column(
                     children: <Widget>[
                       DropdownButton<String>(
+                        dropdownColor: Colors.green,
                         value: dropdownValue,
                         icon: Icon(Icons.arrow_downward),
                         iconSize: 24,
@@ -115,6 +140,30 @@ class _ByDateState extends State<ByDate> {
                           });
                         },
                         items: <String>['AllDate', 'ByDate']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                      DropdownButton<String>(
+                        dropdownColor: Colors.green,
+                        value: dropdownSort,
+                        icon: Icon(Icons.arrow_downward),
+                        iconSize: 24,
+                        elevation: 16,
+                        style: TextStyle(color: Colors.deepPurple),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.deepPurpleAccent,
+                        ),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            dropdownSort = newValue;
+                          });
+                        },
+                        items: <String>['ByDefault', 'up to down', 'down to up']
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -204,7 +253,7 @@ class _ByDateState extends State<ByDate> {
 
   Widget itemCard(snapshot) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10.0, 100, 10, 10),
+      padding: const EdgeInsets.fromLTRB(10.0, 120, 10, 10),
       child: ListView.builder(
           physics: AlwaysScrollableScrollPhysics(),
           itemCount: snapshot.data.length,
@@ -216,7 +265,6 @@ class _ByDateState extends State<ByDate> {
             DateTime eDate = DateTime.parse(endDate);
             if (sDate.isBefore(oDate) && eDate.isAfter(oDate) &&
                 dropdownValue != 'AllDate') {
-              print("1");
               return renderCard(snapshot.data, position);
             }
             else if (dropdownValue == 'AllDate') {
