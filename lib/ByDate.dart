@@ -17,6 +17,7 @@ class _ByDateState extends State<ByDate> {
   List<Data> filter = [];
 
   ScrollController _controller = ScrollController();
+ // String url = "http://192.168.100.224:3000/get";
   String url = "http://192.168.100.3:3000/get";
 
   var json;
@@ -37,7 +38,6 @@ class _ByDateState extends State<ByDate> {
     setState(() {
       Comparator<Data> sortBySalary = (a, b) => a.salary.compareTo(b.salary);
       filter.sort(sortBySalary);
-      print(filter[0].salary);
       if (dropdownSort == 'up to down') {
         return filter;
       }
@@ -112,30 +112,41 @@ class _ByDateState extends State<ByDate> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  dropdownValue == 'ByDate'
-                      ? Column(
-                    children: <Widget>[
-                      Text(
-                        "Start Date",
-                        style: TextStyle(
-                            color: Colors.green,
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.italic),
-                            ),
-                            Row(
-                              children: <Widget>[
-                          IconButton(
-                            icon: Icon(Icons.date_range),
-                            onPressed: () {
-                              dateTime(1);
-                            },
+                  if (dropdownValue == 'ByDate') Container(
+                    decoration: BoxDecoration(
+                        color: Colors.yellow,
+                        borderRadius: BorderRadius.circular(16)
+                    ),
+                    child: FlatButton(
+                      onPressed: () {
+                        dateTime(1);
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            "Start Date",
+                            style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic),
                           ),
-                          Text(startDate),
+                          Row(
+                            children: <Widget>[
+                              IconButton(
+                                icon: Icon(Icons.date_range),
+                                onPressed: () {
+                                  dateTime(1);
+                                },
+                              ),
+                              Text(startDate),
+                            ],
+                          ),
                         ],
                       ),
-                    ],
-                  ) : Container(),
+                    ),
+                  ) else
+                    Container(),
                   Column(
                     children: <Widget>[
                       DropdownButton<String>(

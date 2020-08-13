@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class MainApp extends StatefulWidget {
   @override
@@ -20,6 +21,8 @@ class _MainAppState extends State<MainApp> {
   getShared() async {
     sharedPreferences = await SharedPreferences.getInstance();
   }
+
+  final controller = PageController(viewportFraction: 1);
 
   @override
   void initState() {
@@ -49,9 +52,26 @@ class _MainAppState extends State<MainApp> {
           )
         ],
       ),
-      body: PageView.builder(
-        itemBuilder: (context, position) => pages[position],
-        itemCount: pages.length,
+      body: Stack(
+        children: <Widget>[
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: PageView.builder(
+              controller: controller,
+              itemBuilder: (context, position) => pages[position],
+              itemCount: pages.length,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 640, horizontal: 180),
+            child: SmoothPageIndicator(
+              controller: controller,
+              count: 2,
+              effect: WormEffect(),
+            ),
+          ),
+        ],
       ),
     );
   }

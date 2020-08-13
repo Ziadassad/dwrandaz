@@ -273,7 +273,7 @@ class _SignInState extends State<Signin> {
                                 });
                               },
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -298,11 +298,11 @@ class _SignInState extends State<Signin> {
           check = true;
         } else {
           message('sign in field maybe your account incorrect');
-          check = true;
+          check = false;
         }
       } else {
         message('please check your internet connection');
-        check = true;
+        check = false;
       }
     });
   }

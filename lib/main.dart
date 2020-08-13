@@ -5,6 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// 1 - bage navigator  /
+// 2 - pichart desgin and top team /
+// 3 - click date
+// 4 - color list
+// 5 - profile
+// 6 - number formate
+
 void main() {
   runApp(
     ConnectivityAppWrapper(
