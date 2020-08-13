@@ -269,7 +269,7 @@ class _SignInState extends State<Signin> {
   }
 
   signin(){
-    if(email == "ziad" && password == "ziad"){
+    if(email == "dwrandaz" && password == "dwrandaz"){
       sharedPreferences.setBool("login", true);
       return true;
     }
