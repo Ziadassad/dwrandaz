@@ -22,6 +22,7 @@ class _ByDateState extends State<ByDate> {
   bool isLoad = true;
 
   Future refresh() async {
+    filter.clear();
     data.clear();
 
     var result = await http.get(url);
