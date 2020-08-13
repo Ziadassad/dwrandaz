@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -55,8 +56,7 @@ class _OverAllState extends State<OverAll> {
       charts.Series(
         domainFn: (Task task, _) => task.team,
         measureFn: (Task task, _) => task.salary,
-        colorFn: (Task task, _) =>
-            charts.ColorUtil.fromDartColor(task.color),
+        colorFn: (Task task, _) => charts.ColorUtil.fromDartColor(task.color),
         id: 'Air Pollution',
         data: piedata,
         labelAccessorFn: (Task row, _) => '\$ ${row.salary}',
@@ -66,19 +66,33 @@ class _OverAllState extends State<OverAll> {
     return await _seriesPieData;
   }
 
+  var connectivityResult;
+  bool check = false;
+
+  connection() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      check = true;
+    } else {
+      check = false;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // _generateData();
+    connection();
     _seriesPieData = List<charts.Series<Task, String>>();
   }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: _generateData(),
-        builder: (context , snapshot) {
-          if(snapshot.connectionState == ConnectionState.done){
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
             return Padding(
               padding: EdgeInsets.all(8.0),
               child: Container(
@@ -89,7 +103,7 @@ class _OverAllState extends State<OverAll> {
                         'Team and Salary', style: TextStyle(
                           fontSize: 24.0, fontWeight: FontWeight.bold),),
                       SizedBox(height: 10.0,),
-                      Expanded(
+                      check == true ? Expanded(
                         child: charts.PieChart(
                             _seriesPieData,
                             animate: true,
@@ -114,18 +128,19 @@ class _OverAllState extends State<OverAll> {
                                 arcWidth: 170,
                                 arcRendererDecorators: [
                                   new charts.ArcLabelDecorator(
-                                      labelPosition: charts.ArcLabelPosition.inside
+                                      labelPosition: charts.ArcLabelPosition
+                                          .inside
                                   )
                                 ])
                         ),
-                      ),
+                      ) : Center(child: Text("No Internet"),),
                     ],
                   ),
                 ),
               ),
             );
           }
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator(),);
         }
     );
   }

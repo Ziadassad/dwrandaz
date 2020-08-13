@@ -260,13 +260,17 @@ class _SignInState extends State<Signin> {
                                 textAlign: TextAlign.center,
                               ),
                               onPressed: () {
-                                bool check = signin();
-                                if (check) {
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                          builder: (context) => MainApp()),
-                                          (Route<dynamic> route) => false);
-                                }
+                                setState(() {
+                                  signin();
+                                  print(check);
+                                  if (check) {
+                                    sharedPreferences.setBool("login", true);
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                            builder: (context) => MainApp()),
+                                        (Route<dynamic> route) => false);
+                                  }
+                                });
                               },
                             ),
                           )
@@ -283,21 +287,22 @@ class _SignInState extends State<Signin> {
     );
   }
 
+  bool check = false;
+
   signin() async {
     bool ch = await connection();
     setState(() {
       // ignore: unrelated_type_equality_checks
       if (ch) {
         if (email == "dwrandaz" && password == "dwrandaz") {
-          sharedPreferences.setBool("login", true);
-          return true;
+          check = true;
         } else {
           message('sign in field maybe your account incorrect');
-          return false;
+          check = true;
         }
       } else {
         message('please check your internet connection');
-        return false;
+        check = true;
       }
     });
   }

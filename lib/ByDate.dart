@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:dwrandaz/Data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -69,10 +70,24 @@ class _ByDateState extends State<ByDate> {
 //    data.add(Data("Team D", "20", "3 / 5 /2020"));
   }
 
+  var connectivityResult;
+  bool check = false;
+
+  connection() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      check = true;
+    } else {
+      check = false;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    connection();
     refresh();
     loadData();
   }
@@ -256,24 +271,28 @@ class _ByDateState extends State<ByDate> {
   Widget itemCard(snapshot) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10.0, 120, 10, 10),
-      child: ListView.builder(
-          physics: AlwaysScrollableScrollPhysics(),
-          itemCount: snapshot.data.length,
-          controller: _controller,
-          itemBuilder: (context, position) {
-            DateTime oDate = DateTime.parse(
-                snapshot.data[position].date + " 13:27:00");
-            DateTime sDate = DateTime.parse(startDate);
-            DateTime eDate = DateTime.parse(endDate);
-            if (sDate.isBefore(oDate) && eDate.isAfter(oDate) &&
-                dropdownValue != 'AllDate') {
-              return renderCard(snapshot.data, position);
-            }
-            else if (dropdownValue == 'AllDate') {
-              return renderCard(snapshot.data, position);
-            }
-            return Container();
-          }),
+      child: check == true
+          ? ListView.builder(
+              physics: AlwaysScrollableScrollPhysics(),
+              itemCount: snapshot.data.length,
+              controller: _controller,
+              itemBuilder: (context, position) {
+                DateTime oDate =
+                    DateTime.parse(snapshot.data[position].date + " 13:27:00");
+                DateTime sDate = DateTime.parse(startDate);
+                DateTime eDate = DateTime.parse(endDate);
+                if (sDate.isBefore(oDate) &&
+                    eDate.isAfter(oDate) &&
+                    dropdownValue != 'AllDate') {
+                  return renderCard(snapshot.data, position);
+                } else if (dropdownValue == 'AllDate') {
+                  return renderCard(snapshot.data, position);
+                }
+                return Container();
+              })
+          : Center(
+              child: Text("No Internet"),
+            ),
     );
   }
 }
