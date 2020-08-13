@@ -1,6 +1,8 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:dwrandaz/MainApp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Signin extends StatefulWidget {
@@ -21,10 +23,23 @@ class _SignInState extends State<Signin> {
     sharedPreferences = await SharedPreferences.getInstance();
   }
 
+  var connectivityResult;
+
+  Future connection() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    connection();
     initShared();
   }
 
@@ -54,7 +69,7 @@ class _SignInState extends State<Signin> {
                       height: 11.1,
                       decoration: BoxDecoration(
                         borderRadius:
-                            BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                        BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
                         color: const Color(0x1a6c63ff),
                       ),
                     ),
@@ -73,7 +88,7 @@ class _SignInState extends State<Signin> {
                       height: 3.8,
                       decoration: BoxDecoration(
                         borderRadius:
-                            BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                        BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
                         color: const Color(0x1a6c63ff),
                       ),
                     ),
@@ -92,7 +107,7 @@ class _SignInState extends State<Signin> {
                       height: 4.1,
                       decoration: BoxDecoration(
                         borderRadius:
-                            BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
+                        BorderRadius.all(Radius.elliptical(9999.0, 9999.0)),
                         color: const Color(0xff6c63ff),
                       ),
                     ),
@@ -250,7 +265,7 @@ class _SignInState extends State<Signin> {
                                   Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute(
                                           builder: (context) => MainApp()),
-                                      (Route<dynamic> route) => false);
+                                          (Route<dynamic> route) => false);
                                 }
                               },
                             ),
@@ -268,16 +283,35 @@ class _SignInState extends State<Signin> {
     );
   }
 
-  signin(){
-    if(email == "dwrandaz" && password == "dwrandaz"){
-      sharedPreferences.setBool("login", true);
-      return true;
-    }
-    else{
-      return false;
-    }
+  signin() async {
+    bool ch = await connection();
+    setState(() {
+      // ignore: unrelated_type_equality_checks
+      if (ch) {
+        if (email == "dwrandaz" && password == "dwrandaz") {
+          sharedPreferences.setBool("login", true);
+          return true;
+        } else {
+          message('sign in field maybe your account incorrect');
+          return false;
+        }
+      } else {
+        message('please check your internet connection');
+        return false;
+      }
+    });
   }
 
+  void message(String message) {
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
 }
 
 const String _svg_ioxy88 =
