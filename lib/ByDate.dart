@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dwrandaz/Data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -324,10 +325,3 @@ colorTeam(String str) {
   }
 }
 
-class Data {
-  String nameTeam;
-  String salary;
-  String date;
-
-  Data(this.nameTeam, this.salary, this.date);
-}
