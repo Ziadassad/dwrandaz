@@ -53,21 +53,19 @@ class _ByDateState extends State<ByDate> {
   Future<List<Data>> loadData() async {
     if (dropdownSort == 'up to down') {
       return filter.reversed.toList();
-    }
-    else if (dropdownSort == 'down to up') {
+    } else if (dropdownSort == 'down to up') {
       return filter;
-    }
-    else {
+    } else {
       return data;
     }
-//    data.add(Data("Team A", "30", "8 / 6 /2020"));
-//    data.add(Data("Team B", "53", "22 / 3 /2020"));
-//    data.add(Data("Team C", "40", "12 / 4 /2020"));
-//    data.add(Data("Team D", "20", "3 / 5 /2020"));
-//    data.add(Data("Team A", "30", "8 / 6 /2020"));
-//    data.add(Data("Team B", "53", "22 / 3 /2020"));
-//    data.add(Data("Team C", "40", "12 / 4 /2020"));
-//    data.add(Data("Team D", "20", "3 / 5 /2020"));
+    data.add(Data("Team A", "30", "8 / 6 /2020"));
+    data.add(Data("Team B", "53", "22 / 3 /2020"));
+    data.add(Data("Team C", "40", "12 / 4 /2020"));
+    data.add(Data("Team D", "20", "3 / 5 /2020"));
+    data.add(Data("Team A", "30", "8 / 6 /2020"));
+    data.add(Data("Team B", "53", "22 / 3 /2020"));
+    data.add(Data("Team C", "40", "12 / 4 /2020"));
+    data.add(Data("Team D", "20", "3 / 5 /2020"));
   }
 
   var connectivityResult;
