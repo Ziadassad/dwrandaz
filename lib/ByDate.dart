@@ -58,14 +58,14 @@ class _ByDateState extends State<ByDate> {
     } else {
       return data;
     }
-    data.add(Data("Team A", "30", "8 / 6 /2020"));
-    data.add(Data("Team B", "53", "22 / 3 /2020"));
-    data.add(Data("Team C", "40", "12 / 4 /2020"));
-    data.add(Data("Team D", "20", "3 / 5 /2020"));
-    data.add(Data("Team A", "30", "8 / 6 /2020"));
-    data.add(Data("Team B", "53", "22 / 3 /2020"));
-    data.add(Data("Team C", "40", "12 / 4 /2020"));
-    data.add(Data("Team D", "20", "3 / 5 /2020"));
+//    data.add(Data("Team A", "30", "8 / 6 /2020"));
+//    data.add(Data("Team B", "53", "22 / 3 /2020"));
+//    data.add(Data("Team C", "40", "12 / 4 /2020"));
+//    data.add(Data("Team D", "20", "3 / 5 /2020"));
+//    data.add(Data("Team A", "30", "8 / 6 /2020"));
+//    data.add(Data("Team B", "53", "22 / 3 /2020"));
+//    data.add(Data("Team C", "40", "12 / 4 /2020"));
+//    data.add(Data("Team D", "20", "3 / 5 /2020"));
   }
 
   var connectivityResult;
@@ -98,7 +98,7 @@ class _ByDateState extends State<ByDate> {
     return Stack(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.only(top: 5),
+          padding: EdgeInsets.only(top: 0),
           decoration: BoxDecoration(
               color: Colors.lightBlueAccent,
               borderRadius: BorderRadius.only(
@@ -108,44 +108,53 @@ class _ByDateState extends State<ByDate> {
           height: 120,
           child: Center(
             child: Padding(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.only(top: 5, bottom: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  if (dropdownValue == 'ByDate') Container(
-                    decoration: BoxDecoration(
-                        color: Colors.yellow,
-                        borderRadius: BorderRadius.circular(16)
-                    ),
-                    child: FlatButton(
-                      onPressed: () {
-                        dateTime(1);
-                      },
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            "Start Date",
-                            style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 17,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic),
+                  if (dropdownValue == 'ByDate')
+                    Column(
+                      children: <Widget>[
+                        Container(
+                          width: 120,
+                          height: 80,
+                          decoration: BoxDecoration(
+                              color: Colors.yellow,
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(25),
+                                  bottomRight: Radius.circular(25),
+                                  bottomLeft: Radius.circular(55))),
+                          child: FlatButton(
+                            onPressed: () {
+                              dateTime(1);
+                            },
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  "Start Date",
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.italic),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.date_range),
+                                  onPressed: () {
+                                    dateTime(1);
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                          Row(
-                            children: <Widget>[
-                              IconButton(
-                                icon: Icon(Icons.date_range),
-                                onPressed: () {
-                                  dateTime(1);
-                                },
-                              ),
-                              Text(startDate),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ) else
+                        ),
+                        SizedBox(
+                          height: 9,
+                        ),
+                        Text(startDate)
+                      ],
+                    ) else
                     Container(),
                   Column(
                     children: <Widget>[
@@ -201,23 +210,41 @@ class _ByDateState extends State<ByDate> {
                   ),
                   dropdownValue == 'ByDate' ? Column(
                     children: <Widget>[
-                      Text("End Date",
-                          style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic)),
-                      Row(
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(Icons.date_range),
-                            onPressed: () {
-                              dateTime(2);
-                            },
+                      Container(
+                        width: 120,
+                        height: 80,
+                        decoration: BoxDecoration(
+                            color: Colors.yellow,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(25),
+                                bottomLeft: Radius.circular(25),
+                                bottomRight: Radius.circular(55)
+                            )
+                        ),
+                        child: FlatButton(
+                          onPressed: () {
+                            dateTime(2);
+                          },
+                          child: Column(
+                            children: <Widget>[
+                              Text("End Date",
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.italic)),
+                              IconButton(
+                                icon: Icon(Icons.date_range),
+                                onPressed: () {
+                                  dateTime(2);
+                                },
+                              ),
+                            ],
                           ),
-                          Text(endDate),
-                        ],
+                        ),
                       ),
+                      SizedBox(height: 9,),
+                      Text(endDate)
                     ],
                   ) : Container(),
                 ],
@@ -274,7 +301,6 @@ class _ByDateState extends State<ByDate> {
         },
         currentTime: DateTime.now(),
         locale: LocaleType.en);
-    print("yes");
   }
 
   Widget itemCard(snapshot) {
