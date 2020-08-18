@@ -275,34 +275,50 @@ class _ByDateState extends State<ByDate> {
       offset: Offset(0, 110),
       child: Container(
         width: double.infinity,
-        child: DataTable(
-          columns: <DataColumn>[
-            DataColumn(label: Text("NameTeam", style: TextStyle(fontSize: 18,
-                color: Colors.black,
-                fontStyle: FontStyle.italic),)),
-            DataColumn(label: Text("Salary", style: TextStyle(fontSize: 18,
-                color: Colors.black,
-                fontStyle: FontStyle.italic),)),
-            DataColumn(label: Text("Date", style: TextStyle(fontSize: 18,
-                color: Colors.black,
-                fontStyle: FontStyle.italic),))
-          ],
-          rows: dropdownValue == 'AllDate' ? list.map((data) =>
-              DataRow(cells: [
-                DataCell(Text(data.nameTeam)),
-                DataCell(Text('\$ ${data.salary}')),
-                DataCell(Text(data.date))
-              ]
-              )
-          ).toList() :
-          byDate.map((data) =>
-              DataRow(cells: [
-                DataCell(Text(data.nameTeam)),
-                DataCell(Text('\$ ${data.salary}')),
-                DataCell(Text(data.date))
-              ]
-              )
-          ).toList(),
+        child: SingleChildScrollView(
+          child: DataTable(
+            columns: <DataColumn>[
+              DataColumn(
+                  label: Text(
+                "NameTeam",
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontStyle: FontStyle.italic),
+              )),
+              DataColumn(
+                  label: Text(
+                "Salary",
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontStyle: FontStyle.italic),
+              )),
+              DataColumn(
+                  label: Text(
+                "Date",
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontStyle: FontStyle.italic),
+              ))
+            ],
+            rows: dropdownValue == 'AllDate'
+                ? list
+                    .map((data) => DataRow(cells: [
+                          DataCell(Text(data.nameTeam)),
+                          DataCell(Text('\$ ${data.salary}')),
+                          DataCell(Text(data.date))
+                        ]))
+                    .toList()
+                : byDate
+                    .map((data) => DataRow(cells: [
+                          DataCell(Text(data.nameTeam)),
+                          DataCell(Text('\$ ${data.salary}')),
+                          DataCell(Text(data.date))
+                        ]))
+                    .toList(),
+          ),
         ),
       ),
     );
