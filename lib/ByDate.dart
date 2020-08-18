@@ -117,7 +117,7 @@ class _ByDateState extends State<ByDate> {
                       children: <Widget>[
                         Container(
                           width: 120,
-                          height: 80,
+                          height: 68,
                           decoration: BoxDecoration(
                               color: Colors.yellow,
                               borderRadius: BorderRadius.only(
@@ -212,18 +212,16 @@ class _ByDateState extends State<ByDate> {
                     children: <Widget>[
                       Container(
                         width: 120,
-                        height: 80,
-                        decoration: BoxDecoration(
-                            color: Colors.yellow,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(25),
-                                bottomLeft: Radius.circular(25),
-                                bottomRight: Radius.circular(55)
-                            )
-                        ),
-                        child: FlatButton(
-                          onPressed: () {
-                            dateTime(2);
+                              height: 68,
+                              decoration: BoxDecoration(
+                                  color: Colors.yellow,
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(25),
+                                      bottomLeft: Radius.circular(25),
+                                      bottomRight: Radius.circular(55))),
+                              child: FlatButton(
+                                onPressed: () {
+                                  dateTime(2);
                           },
                           child: Column(
                             children: <Widget>[
