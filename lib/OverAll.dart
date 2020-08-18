@@ -110,7 +110,7 @@ class _OverAllState extends State<OverAll> {
                   check == true
                       ? Container(
                           decoration: BoxDecoration(
-                              color: Colors.yellowAccent[100],
+                              color: Colors.lightBlueAccent,
                               borderRadius: BorderRadius.circular(12)),
                           height: 350,
                           child: Expanded(

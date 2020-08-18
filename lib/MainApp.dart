@@ -1,5 +1,6 @@
 import 'package:dwrandaz/ByDate.dart';
 import 'package:dwrandaz/OverAll.dart';
+import 'package:dwrandaz/Profile.dart';
 import 'package:dwrandaz/Siginin.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,8 @@ class _MainAppState extends State<MainApp> {
           IconButton(
             icon: Icon(Icons.person_pin),
             onPressed: () {
-              // showDialog(context);
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Profile()));
             },
           ),
           IconButton(

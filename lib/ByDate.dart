@@ -33,18 +33,16 @@ class _ByDateState extends State<ByDate> {
     json.forEach((element) {
       data.add(Data(element['name'], element['salary'], element['date']));
     });
-
+    print(data[0]);
     filter.addAll(data);
     setState(() {
       Comparator<Data> sortBySalary = (a, b) => a.salary.compareTo(b.salary);
       filter.sort(sortBySalary);
       if (dropdownSort == 'up to down') {
         return filter;
-      }
-      else if (dropdownSort == 'down to up') {
+      } else if (dropdownSort == 'down to up') {
         return filter.reversed.toList();
-      }
-      else {
+      } else {
         return data;
       }
     });
@@ -159,16 +157,12 @@ class _ByDateState extends State<ByDate> {
                   Column(
                     children: <Widget>[
                       DropdownButton<String>(
-                        dropdownColor: Colors.green,
+                        dropdownColor: Colors.white,
                         value: dropdownValue,
-                        icon: Icon(Icons.arrow_downward),
                         iconSize: 24,
                         elevation: 16,
                         style: TextStyle(color: Colors.deepPurple),
-                        underline: Container(
-                          height: 2,
-                          color: Colors.deepPurpleAccent,
-                        ),
+                        underline: Container(),
                         onChanged: (String newValue) {
                           setState(() {
                             dropdownValue = newValue;
@@ -183,16 +177,12 @@ class _ByDateState extends State<ByDate> {
                         }).toList(),
                       ),
                       DropdownButton<String>(
-                        dropdownColor: Colors.green,
+                        dropdownColor: Colors.white,
                         value: dropdownSort,
-                        icon: Icon(Icons.arrow_downward),
                         iconSize: 24,
                         elevation: 16,
                         style: TextStyle(color: Colors.deepPurple),
-                        underline: Container(
-                          height: 2,
-                          color: Colors.deepPurpleAccent,
-                        ),
+                        underline: Container(),
                         onChanged: (String newValue) {
                           setState(() {
                             dropdownSort = newValue;
@@ -257,7 +247,7 @@ class _ByDateState extends State<ByDate> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
-                return dataTable(snapshot);
+                return dataTable(snapshot.data);
               } else {
                 return Center(child: CircularProgressIndicator());
               }
@@ -268,18 +258,51 @@ class _ByDateState extends State<ByDate> {
     );
   }
 
-  Widget dataTable(snapshot) {
+  Widget dataTable(List<Data> list) {
+    List<Data> byDate = [];
+    DateTime sDate = DateTime.parse(startDate);
+    DateTime eDate = DateTime.parse(endDate);
+    if (dropdownValue != 'AllDate') {
+      list.forEach((element) {
+        DateTime oDate = DateTime.parse(element.date + " 13:27:00");
+        if (sDate.isBefore(oDate) && eDate.isAfter(oDate)) {
+          byDate.add(element);
+        }
+      });
+    }
+
     return Transform.translate(
       offset: Offset(0, 110),
       child: Container(
         width: double.infinity,
         child: DataTable(
           columns: <DataColumn>[
-            DataColumn(label: Text("nameTeam")),
-            DataColumn(label: Text("Salary")),
-            DataColumn(label: Text("Date"))
+            DataColumn(label: Text("NameTeam", style: TextStyle(fontSize: 18,
+                color: Colors.black,
+                fontStyle: FontStyle.italic),)),
+            DataColumn(label: Text("Salary", style: TextStyle(fontSize: 18,
+                color: Colors.black,
+                fontStyle: FontStyle.italic),)),
+            DataColumn(label: Text("Date", style: TextStyle(fontSize: 18,
+                color: Colors.black,
+                fontStyle: FontStyle.italic),))
           ],
-          rows: [],
+          rows: dropdownValue == 'AllDate' ? list.map((data) =>
+              DataRow(cells: [
+                DataCell(Text(data.nameTeam)),
+                DataCell(Text('\$ ${data.salary}')),
+                DataCell(Text(data.date))
+              ]
+              )
+          ).toList() :
+          byDate.map((data) =>
+              DataRow(cells: [
+                DataCell(Text(data.nameTeam)),
+                DataCell(Text('\$ ${data.salary}')),
+                DataCell(Text(data.date))
+              ]
+              )
+          ).toList(),
         ),
       ),
     );
@@ -317,64 +340,64 @@ class _ByDateState extends State<ByDate> {
         locale: LocaleType.en);
   }
 
-  Widget itemCard(snapshot) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10.0, 120, 10, 10),
-      child: check == true
-          ? ListView.builder(
-              physics: AlwaysScrollableScrollPhysics(),
-              itemCount: snapshot.data.length,
-              controller: _controller,
-              itemBuilder: (context, position) {
-                DateTime oDate =
-                    DateTime.parse(snapshot.data[position].date + " 13:27:00");
-                DateTime sDate = DateTime.parse(startDate);
-                DateTime eDate = DateTime.parse(endDate);
-                if (sDate.isBefore(oDate) &&
-                    eDate.isAfter(oDate) &&
-                    dropdownValue != 'AllDate') {
-                  return renderCard(snapshot.data, position);
-                } else if (dropdownValue == 'AllDate') {
-                  return renderCard(snapshot.data, position);
-                }
-                return Container();
-              })
-          : Center(
-              child: Text("No Internet"),
-            ),
-    );
-  }
-}
-
-renderCard(data, int position) {
-  return Container(
-    margin: EdgeInsets.only(top: 10),
-    height: 100,
-    width: double.infinity,
-    decoration: BoxDecoration(
-        color: colorTeam(data[position].nameTeam),
-        borderRadius: BorderRadius.circular(16)),
-    child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Text(
-              'Team  :  ${data[position].nameTeam}',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Salary :  \$ ${data[position].salary}',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Date    :  ${data[position].date}',
-              style: TextStyle(fontSize: 20),
-            )
-          ],
-        )),
-  );
+//  Widget itemCard(snapshot) {
+//    return Padding(
+//      padding: const EdgeInsets.fromLTRB(10.0, 120, 10, 10),
+//      child: check == true
+//          ? ListView.builder(
+//              physics: AlwaysScrollableScrollPhysics(),
+//              itemCount: snapshot.data.length,
+//              controller: _controller,
+//              itemBuilder: (context, position) {
+//                DateTime oDate =
+//                    DateTime.parse(snapshot.data[position].date + " 13:27:00");
+//                DateTime sDate = DateTime.parse(startDate);
+//                DateTime eDate = DateTime.parse(endDate);
+//                if (sDate.isBefore(oDate) &&
+//                    eDate.isAfter(oDate) &&
+//                    dropdownValue != 'AllDate') {
+//                  return renderCard(snapshot.data, position);
+//                } else if (dropdownValue == 'AllDate') {
+//                  return renderCard(snapshot.data, position);
+//                }
+//                return Container();
+//              })
+//          : Center(
+//              child: Text("No Internet"),
+//            ),
+//    );
+//  }
+//}
+//
+//renderCard(data, int position) {
+//  return Container(
+//    margin: EdgeInsets.only(top: 10),
+//    height: 100,
+//    width: double.infinity,
+//    decoration: BoxDecoration(
+//        color: colorTeam(data[position].nameTeam),
+//        borderRadius: BorderRadius.circular(16)),
+//    child: Padding(
+//        padding: EdgeInsets.symmetric(horizontal: 20),
+//        child: Column(
+//          crossAxisAlignment: CrossAxisAlignment.start,
+//          mainAxisAlignment: MainAxisAlignment.spaceAround,
+//          children: <Widget>[
+//            Text(
+//              'Team  :  ${data[position].nameTeam}',
+//              style: TextStyle(fontSize: 20),
+//            ),
+//            Text(
+//              'Salary :  \$ ${data[position].salary}',
+//              style: TextStyle(fontSize: 20),
+//            ),
+//            Text(
+//              'Date    :  ${data[position].date}',
+//              style: TextStyle(fontSize: 20),
+//            )
+//          ],
+//        )),
+//  );
 }
 
 colorTeam(String str) {
