@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 class OverAll extends StatefulWidget {
@@ -99,54 +101,87 @@ class _OverAllState extends State<OverAll> {
                 child: Container(
                     child: Stack(
                         children: <Widget>[
-                          Text(
-                            'Team and Salary', style: TextStyle(
-                              fontSize: 24.0, fontWeight: FontWeight.bold),),
-                          SizedBox(height: 20.0,),
-                          check == true ? Container(
-                            decoration: BoxDecoration(
-                                color: Colors.yellowAccent[100],
-                                borderRadius: BorderRadius.circular(12)
+//                          Text(
+//                            'Team and Salary', style: TextStyle(
+//                              fontSize: 24.0, fontWeight: FontWeight.bold),),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  check == true
+                      ? Container(
+                          decoration: BoxDecoration(
+                              color: Colors.yellowAccent[100],
+                              borderRadius: BorderRadius.circular(12)),
+                          height: 350,
+                          child: Expanded(
+                            child: charts.PieChart(_seriesPieData,
+                                animate: true,
+                                animationDuration: Duration(seconds: 2),
+                                defaultRenderer: new charts.ArcRendererConfig(
+                                    arcWidth: 170,
+                                    arcRendererDecorators: [
+                                      new charts.ArcLabelDecorator(
+                                          labelPosition:
+                                              charts.ArcLabelPosition.inside)
+                                    ])),
+                          ),
+                        )
+                      : Center(
+                          child: Text("No Internet"),
+                        ),
+                  Transform.translate(
+                    offset: Offset(0, 350),
+                    child: Container(
+                      color: Colors.white,
+                      child: Column(
+                        children: <Widget>[
+                          ListTile(
+                            leading: Text("Top"),
+                            title: Text("Name Team",
+                                style: TextStyle(fontStyle: FontStyle.italic)),
+                            trailing: Text(
+                              "TotalSalary",
+                              style: GoogleFonts.montserrat(
+                                  textStyle: TextStyle(fontSize: 16)),
                             ),
-                            height: 400,
-                            child: Expanded(
-                              child: charts.PieChart(
-                                  _seriesPieData,
-                                  animate: true,
-                                  animationDuration: Duration(seconds: 2),
-                                  defaultRenderer: new charts.ArcRendererConfig(
-                                      arcWidth: 170,
-                                      arcRendererDecorators: [
-                                        new charts.ArcLabelDecorator(
-                                            labelPosition: charts
-                                                .ArcLabelPosition
-                                                .inside
-                                        )
-                                      ])
-                              ),
-                            ),
-                          ) :
-                          Center(child: Text("No Internet"),),
+                          ),
+                          Container(
+                            color: Colors.black,
+                            width: double.infinity,
+                            height: 1,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
 
-//                      for(int i = 0 ; i < 20;i++)
-//                            Text("dddd"),
-                          Transform.translate(
-                            offset: Offset(0, 400),
-                            child: Container(
-                              height: 300,
-                              child: ListView.separated(
-                                  physics: AlwaysScrollableScrollPhysics(),
-                                  separatorBuilder: (BuildContext context,
-                                      int index) => Divider(),
-                                  itemCount: pieData.length,
-                                  itemBuilder: (context, position) {
-                                    return ListTile(
-                                      title: Text(" ${pieData[position].team}"),
-                                      trailing: Text(
-                                          "${pieData[position].salary}"),
-                                    );
-                                  }
+                  Transform.translate(
+                    offset: Offset(0, 420),
+                    child: Container(
+                      height: 250,
+                      child: ListView.separated(
+                          physics: AlwaysScrollableScrollPhysics(),
+                          separatorBuilder: (BuildContext context, int index) =>
+                              Divider(),
+                          itemCount: pieData.length,
+                          itemBuilder: (context, position) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                  color: pieData[position].color,
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: ListTile(
+                                title: Text(
+                                  " ${pieData[position].team}",
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                leading: Text("${position + 1}"),
+                                trailing: Text(
+                                  "\$ ${pieData[position].salary}",
+                                  style: TextStyle(fontSize: 20),
+                                ),
                               ),
+                            );
+                          }),
                             ),
                           )
                         ]

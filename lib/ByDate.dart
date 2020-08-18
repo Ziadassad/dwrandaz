@@ -257,7 +257,7 @@ class _ByDateState extends State<ByDate> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
-                return itemCard(snapshot);
+                return dataTable(snapshot);
               } else {
                 return Center(child: CircularProgressIndicator());
               }
@@ -268,16 +268,32 @@ class _ByDateState extends State<ByDate> {
     );
   }
 
+  Widget dataTable(snapshot) {
+    return Transform.translate(
+      offset: Offset(0, 110),
+      child: Container(
+        width: double.infinity,
+        child: DataTable(
+          columns: <DataColumn>[
+            DataColumn(label: Text("nameTeam")),
+            DataColumn(label: Text("Salary")),
+            DataColumn(label: Text("Date"))
+          ],
+          rows: [],
+        ),
+      ),
+    );
+  }
+
   String startDate = "2020-08-01";
   String endDate = "2020-12-30";
 
   dateTime(index) {
     DatePicker.showDatePicker(context,
         showTitleActions: true,
-        minTime: DateTime(2020, 8, 10),
-        onChanged: (date) {
-          setState(() {
-            if (index == 1) {
+        minTime: DateTime(2020, 8, 10), onChanged: (date) {
+      setState(() {
+        if (index == 1) {
               String date1 = date.toString();
               startDate = date1.substring(0, 10);
             } else {
