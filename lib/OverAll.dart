@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:connectivity/connectivity.dart';
+import 'package:dwrandaz/GroupTeam.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,39 +20,69 @@ class _OverAllState extends State<OverAll> {
   String url = "http://192.168.100.3:3000/getOverAll";
 
   List<Task> pieData;
+  List<Task> totalSalary;
 
   double salaryTeamA = 0;
   double salaryTeamB = 0;
   double salaryTeamC = 0;
   double salaryTeamD = 0;
 
+  int reqA = 0;
+  int reqB = 0;
+  int reqC = 0;
+  int reqD = 0;
+
   Future _generateData() async {
+    reqA = 0;
+    reqB = 0;
+    reqC = 0;
+    reqD = 0;
     var result = await http.get(url);
     var json = jsonDecode(result.body) as List<dynamic>;
 
     json.forEach((element) {
       switch (element['name']) {
         case "Team A":
+          reqA++;
           salaryTeamA = salaryTeamA + int.parse(element['salary']);
           break;
         case "Team B":
+          reqB++;
           salaryTeamB = salaryTeamB + int.parse(element['salary']);
           break;
         case "Team C":
+          reqC++;
           salaryTeamC = salaryTeamC + int.parse(element['salary']);
           break;
         case "Team D":
+          reqD++;
           salaryTeamD = salaryTeamD + int.parse(element['salary']);
           break;
       }
     });
+    double A = (reqA / json.length) * 100;
+    double B = (reqB / json.length) * 100;
+    double C = (reqC / json.length) * 100;
+    double D = (reqD / json.length) * 100;
+    A = num.parse(A.toStringAsFixed(1));
+    B = num.parse(B.toStringAsFixed(1));
+    C = num.parse(C.toStringAsFixed(1));
+    D = num.parse(D.toStringAsFixed(1));
 
     pieData = [
-      new Task('team A', salaryTeamA, Color(0xff3366cc)),
-      new Task('team B', salaryTeamB, Color(0xff990099)),
-      new Task('team C', salaryTeamC, Color(0xff109618)),
-      new Task('team D', salaryTeamD, Color(0xfffdbe19)),
+      new Task('teamA', A, Color(0xff3366cc)),
+      new Task('teamB', B, Color(0xff990099)),
+      new Task('teamC', C, Color(0xff109618)),
+      new Task('teamD', D, Color(0xfffdbe19)),
     ];
+
+    totalSalary = [
+      new Task('teamA', salaryTeamA, Color(0xff3366cc)),
+      new Task('teamB', salaryTeamB, Color(0xff990099)),
+      new Task('teamC', salaryTeamC, Color(0xff109618)),
+      new Task('teamD', salaryTeamD, Color(0xfffdbe19)),
+    ];
+
     _seriesPieData.add(
       charts.Series(
         domainFn: (Task task, _) => task.team,
@@ -59,12 +90,12 @@ class _OverAllState extends State<OverAll> {
         colorFn: (Task task, _) => charts.ColorUtil.fromDartColor(task.color),
         id: 'Air Pollution',
         data: pieData,
-        labelAccessorFn: (Task row, _) => '\$ ${row.salary}',
+        labelAccessorFn: (Task row, _) => '\% ${row.salary}',
       ),
     );
     Comparator<Task> sortBySalary = (a, b) => a.salary.compareTo(b.salary);
-    pieData.sort(sortBySalary);
-    pieData = pieData.reversed.toList();
+    totalSalary.sort(sortBySalary);
+    totalSalary = totalSalary.reversed.toList();
     return await _seriesPieData;
   }
 
@@ -101,9 +132,6 @@ class _OverAllState extends State<OverAll> {
                 child: Container(
                     child: Stack(
                         children: <Widget>[
-//                          Text(
-//                            'Team and Salary', style: TextStyle(
-//                              fontSize: 24.0, fontWeight: FontWeight.bold),),
                   SizedBox(
                     height: 20.0,
                   ),
@@ -116,7 +144,7 @@ class _OverAllState extends State<OverAll> {
                           child: Expanded(
                             child: charts.PieChart(_seriesPieData,
                                 animate: true,
-                                animationDuration: Duration(seconds: 2),
+                                animationDuration: Duration(milliseconds: 700),
                                 defaultRenderer: new charts.ArcRendererConfig(
                                     arcWidth: 170,
                                     arcRendererDecorators: [
@@ -163,21 +191,34 @@ class _OverAllState extends State<OverAll> {
                           physics: AlwaysScrollableScrollPhysics(),
                           separatorBuilder: (BuildContext context, int index) =>
                               Divider(),
-                          itemCount: pieData.length,
+                          itemCount: totalSalary.length,
                           itemBuilder: (context, position) {
                             return Container(
                               decoration: BoxDecoration(
-                                  color: pieData[position].color,
+                                  color: totalSalary[position].color,
                                   borderRadius: BorderRadius.circular(5)),
-                              child: ListTile(
-                                title: Text(
-                                  " ${pieData[position].team}",
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                                leading: Text("${position + 1}"),
-                                trailing: Text(
-                                  "\$ ${pieData[position].salary}",
-                                  style: TextStyle(fontSize: 20),
+                              child: FlatButton(
+                                onPressed: () {
+                                  Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) =>
+                                          GroupTeam(
+                                              totalSalary[position].team)));
+                                },
+                                child: ListTile(
+                                  title: Text(
+                                    " ${totalSalary[position].team}",
+                                    style: TextStyle(
+                                        fontSize: 20, color: Colors.white),
+                                  ),
+                                  leading: Text("${position + 1}",
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white),),
+                                  trailing: Text(
+                                    "\$ ${format(
+                                        totalSalary[position].salary)}",
+                                    style: TextStyle(
+                                        fontSize: 20, color: Colors.white),
+                                  ),
                                 ),
                               ),
                             );
@@ -193,6 +234,10 @@ class _OverAllState extends State<OverAll> {
           }
       ),
     );
+  }
+
+  String format(double n) {
+    return n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 2);
   }
 }
 

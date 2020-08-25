@@ -7,33 +7,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:http/http.dart' as http;
 
-class ByDate extends StatefulWidget {
+class GroupTeam extends StatefulWidget {
+  final String nameTeam;
+
+  GroupTeam(this.nameTeam);
+
   @override
-  _ByDateState createState() => _ByDateState();
+  _GroupTeamState createState() => _GroupTeamState();
 }
 
-class _ByDateState extends State<ByDate> {
+class _GroupTeamState extends State<GroupTeam> {
   List<Data> data = [];
   List<Data> filter = [];
 
   ScrollController _controller = ScrollController();
- // String url = "http://192.168.100.224:3000/get";
-  String url = "http://192.168.100.3:3000/get";
+
+  // String url = "http://192.168.100.224:3000/get";
+  String url = "http://192.168.100.3:3000/";
 
   var json;
   bool isLoad = true;
 
   Future refresh() async {
+    print(url + widget.nameTeam);
     filter.clear();
     data.clear();
 
-    var result = await http.get(url);
+    var result = await http.get(url + widget.nameTeam);
     json = jsonDecode(result.body) as List<dynamic>;
 
     json.forEach((element) {
       data.add(Data(element['name'], element['salary'], element['date']));
     });
-    print(data[0]);
     filter.addAll(data);
     setState(() {
       Comparator<Data> sortBySalary = (a, b) => a.salary.compareTo(b.salary);
@@ -93,25 +98,121 @@ class _ByDateState extends State<ByDate> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.only(top: 0),
-          decoration: BoxDecoration(
-              color: Colors.lightBlueAccent,
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(26),
-                  bottomRight: Radius.circular(26))),
-          width: double.infinity,
-          height: 120,
-          child: Center(
-            child: Padding(
-              padding: EdgeInsets.only(top: 5, bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  if (dropdownValue == 'ByDate')
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.nameTeam),
+        centerTitle: true,
+      ),
+      body: Stack(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(top: 0),
+            decoration: BoxDecoration(
+                color: Colors.lightBlueAccent,
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(26),
+                    bottomRight: Radius.circular(26))),
+            width: double.infinity,
+            height: 120,
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.only(top: 5, bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    if (dropdownValue == 'ByDate')
+                      Column(
+                        children: <Widget>[
+                          Container(
+                            width: 120,
+                            height: 68,
+                            decoration: BoxDecoration(
+                                color: Colors.yellow,
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(25),
+                                    bottomRight: Radius.circular(25),
+                                    bottomLeft: Radius.circular(55))),
+                            child: FlatButton(
+                              onPressed: () {
+                                dateTime(1);
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    "Start Date",
+                                    style: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                        fontStyle: FontStyle.italic),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.date_range),
+                                    onPressed: () {
+                                      dateTime(1);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 9,
+                          ),
+                          Text(startDate)
+                        ],
+                      ) else
+                      Container(),
                     Column(
+                      children: <Widget>[
+                        DropdownButton<String>(
+                          dropdownColor: Colors.white,
+                          value: dropdownValue,
+                          iconSize: 24,
+                          elevation: 16,
+                          style: TextStyle(color: Colors.deepPurple),
+                          underline: Container(),
+                          onChanged: (String newValue) {
+                            setState(() {
+                              dropdownValue = newValue;
+                            });
+                          },
+                          items: <String>['AllDate', 'ByDate']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                        DropdownButton<String>(
+                          dropdownColor: Colors.white,
+                          value: dropdownSort,
+                          iconSize: 24,
+                          elevation: 16,
+                          style: TextStyle(color: Colors.deepPurple),
+                          underline: Container(),
+                          onChanged: (String newValue) {
+                            setState(() {
+                              dropdownSort = newValue;
+                            });
+                          },
+                          items: <String>[
+                            'ByDefault',
+                            'up to down',
+                            'down to up'
+                          ]
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        )
+                      ],
+                    ),
+                    dropdownValue == 'ByDate' ? Column(
                       children: <Widget>[
                         Container(
                           width: 120,
@@ -119,142 +220,56 @@ class _ByDateState extends State<ByDate> {
                           decoration: BoxDecoration(
                               color: Colors.yellow,
                               borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(25),
-                                  bottomRight: Radius.circular(25),
-                                  bottomLeft: Radius.circular(55))),
+                                  topLeft: Radius.circular(25),
+                                  bottomLeft: Radius.circular(25),
+                                  bottomRight: Radius.circular(55))),
                           child: FlatButton(
                             onPressed: () {
-                              dateTime(1);
+                              dateTime(2);
                             },
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Text(
-                                  "Start Date",
-                                  style: TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FontStyle.italic),
-                                ),
+                                Text("End Date",
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                        fontStyle: FontStyle.italic)),
                                 IconButton(
                                   icon: Icon(Icons.date_range),
                                   onPressed: () {
-                                    dateTime(1);
+                                    dateTime(2);
                                   },
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 9,
-                        ),
-                        Text(startDate)
+                        SizedBox(height: 9,),
+                        Text(endDate)
                       ],
-                    ) else
-                    Container(),
-                  Column(
-                    children: <Widget>[
-                      DropdownButton<String>(
-                        dropdownColor: Colors.white,
-                        value: dropdownValue,
-                        iconSize: 24,
-                        elevation: 16,
-                        style: TextStyle(color: Colors.deepPurple),
-                        underline: Container(),
-                        onChanged: (String newValue) {
-                          setState(() {
-                            dropdownValue = newValue;
-                          });
-                        },
-                        items: <String>['AllDate', 'ByDate']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                      DropdownButton<String>(
-                        dropdownColor: Colors.white,
-                        value: dropdownSort,
-                        iconSize: 24,
-                        elevation: 16,
-                        style: TextStyle(color: Colors.deepPurple),
-                        underline: Container(),
-                        onChanged: (String newValue) {
-                          setState(() {
-                            dropdownSort = newValue;
-                          });
-                        },
-                        items: <String>['ByDefault', 'up to down', 'down to up']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      )
-                    ],
-                  ),
-                  dropdownValue == 'ByDate' ? Column(
-                    children: <Widget>[
-                      Container(
-                        width: 120,
-                              height: 68,
-                              decoration: BoxDecoration(
-                                  color: Colors.yellow,
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(25),
-                                      bottomLeft: Radius.circular(25),
-                                      bottomRight: Radius.circular(55))),
-                              child: FlatButton(
-                                onPressed: () {
-                                  dateTime(2);
-                          },
-                          child: Column(
-                            children: <Widget>[
-                              Text("End Date",
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FontStyle.italic)),
-                              IconButton(
-                                icon: Icon(Icons.date_range),
-                                onPressed: () {
-                                  dateTime(2);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 9,),
-                      Text(endDate)
-                    ],
-                  ) : Container(),
-                ],
+                    ) : Container(),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        RefreshIndicator(
-          onRefresh: refresh,
-          child: FutureBuilder(
-            future: loadData(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData) {
-                return dataTable(snapshot.data);
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            },
+          RefreshIndicator(
+            onRefresh: refresh,
+            child: FutureBuilder(
+              future: loadData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData) {
+                  return dataTable(snapshot.data);
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
