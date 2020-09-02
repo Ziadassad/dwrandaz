@@ -16,11 +16,12 @@ class OverAll extends StatefulWidget {
 class _OverAllState extends State<OverAll> {
   List<charts.Series<Task, String>> _seriesPieData;
 
-  // String url = "http://192.168.100.224:3000/getOverAll";
-  String url = "http://192.168.100.3:3000/getOverAll";
+  // String url = "http://192.168.100.230:3000/getOverAll";
+  String url = "http://192.168.100.3:3000/";
 
+  List<Task> list = [];
+  List<Task> listAllService = [];
   List<Task> pieData;
-  List<Task> totalSalary;
 
   double salaryTeamA = 0;
   double salaryTeamB = 0;
@@ -37,50 +38,27 @@ class _OverAllState extends State<OverAll> {
     reqB = 0;
     reqC = 0;
     reqD = 0;
-    var result = await http.get(url);
+    var result = await http.get(url + "getOverAll");
     var json = jsonDecode(result.body) as List<dynamic>;
-
     json.forEach((element) {
-      switch (element['name']) {
-        case "Team A":
-          reqA++;
-          salaryTeamA = salaryTeamA + int.parse(element['salary']);
-          break;
-        case "Team B":
-          reqB++;
-          salaryTeamB = salaryTeamB + int.parse(element['salary']);
-          break;
-        case "Team C":
-          reqC++;
-          salaryTeamC = salaryTeamC + int.parse(element['salary']);
-          break;
-        case "Team D":
-          reqD++;
-          salaryTeamD = salaryTeamD + int.parse(element['salary']);
-          break;
-      }
+      list.add(
+          Task(element['name'], double.parse(element['req']), Colors.white));
     });
-    double A = (reqA / json.length) * 100;
-    double B = (reqB / json.length) * 100;
-    double C = (reqC / json.length) * 100;
-    double D = (reqD / json.length) * 100;
-    A = num.parse(A.toStringAsFixed(1));
-    B = num.parse(B.toStringAsFixed(1));
-    C = num.parse(C.toStringAsFixed(1));
-    D = num.parse(D.toStringAsFixed(1));
+
+//    double A = (reqA / json.length) * 100;
+//    double B = (reqB / json.length) * 100;
+//    double C = (reqC / json.length) * 100;
+//    double D = (reqD / json.length) * 100;
+//    A = num.parse(A.toStringAsFixed(1));
+//    B = num.parse(B.toStringAsFixed(1));
+//    C = num.parse(C.toStringAsFixed(1));
+//    D = num.parse(D.toStringAsFixed(1));
 
     pieData = [
-      new Task('teamA', A, Color(0xff3366cc)),
-      new Task('teamB', B, Color(0xff990099)),
-      new Task('teamC', C, Color(0xff109618)),
-      new Task('teamD', D, Color(0xfffdbe19)),
-    ];
-
-    totalSalary = [
-      new Task('teamA', salaryTeamA, Color(0xff3366cc)),
-      new Task('teamB', salaryTeamB, Color(0xff990099)),
-      new Task('teamC', salaryTeamC, Color(0xff109618)),
-      new Task('teamD', salaryTeamD, Color(0xfffdbe19)),
+      new Task(list[0].team, list[0].salary, Color(0xff3366cc)),
+      new Task(list[1].team, list[1].salary, Color(0xff990099)),
+      new Task(list[2].team, list[2].salary, Color(0xff109618)),
+      new Task(list[3].team, list[3].salary, Color(0xfffdbe19)),
     ];
 
     _seriesPieData.add(
@@ -93,14 +71,27 @@ class _OverAllState extends State<OverAll> {
         labelAccessorFn: (Task row, _) => '\% ${row.salary}',
       ),
     );
+
+    return _seriesPieData;
+  }
+
+  getAllService() async {
+    var resultAll = await http.get(url + "getService");
+    var jsonAll = jsonDecode(resultAll.body) as List<dynamic>;
+    jsonAll.forEach((element) {
+//      print(element);
+      listAllService.add(Task(
+          element['name'], double.parse(element['salary']), Colors.lightBlue));
+    });
     Comparator<Task> sortBySalary = (a, b) => a.salary.compareTo(b.salary);
-    totalSalary.sort(sortBySalary);
-    totalSalary = totalSalary.reversed.toList();
-    return await _seriesPieData;
+    listAllService.sort(sortBySalary);
+    listAllService = listAllService.reversed.toList();
+    return listAllService;
   }
 
   var connectivityResult;
   bool check = false;
+
   connection() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
@@ -145,34 +136,50 @@ class _OverAllState extends State<OverAll> {
                             child: charts.PieChart(_seriesPieData,
                                 animate: true,
                                 animationDuration: Duration(milliseconds: 700),
+                                behaviors: [
+                                  charts.DatumLegend(
+                                      position: charts.BehaviorPosition.bottom,
+                                      outsideJustification: charts
+                                          .OutsideJustification.end,
+                                      desiredMaxColumns: 2,
+                                      cellPadding: EdgeInsets.only(
+                                          right: 10, bottom: 10),
+                                      entryTextStyle: charts.TextStyleSpec(
+                                          color: charts.MaterialPalette.black,
+                                          fontFamily: 'Georgia',
+                                          fontSize: 15
+                                      )
+                                  )
+                                ],
                                 defaultRenderer: new charts.ArcRendererConfig(
                                     arcWidth: 170,
                                     arcRendererDecorators: [
                                       new charts.ArcLabelDecorator(
                                           labelPosition:
-                                              charts.ArcLabelPosition.inside)
+                                          charts.ArcLabelPosition.inside)
                                     ])),
                           ),
-                        )
+                  )
                       : Center(
-                          child: Text("No Internet"),
-                        ),
-                  Transform.translate(
-                    offset: Offset(0, 350),
-                    child: Container(
-                      color: Colors.white,
-                      child: Column(
-                        children: <Widget>[
-                          ListTile(
-                            leading: Text("Top"),
-                            title: Text("Name Team",
-                                style: TextStyle(fontStyle: FontStyle.italic)),
-                            trailing: Text(
-                              "TotalSalary",
-                              style: GoogleFonts.montserrat(
-                                  textStyle: TextStyle(fontSize: 16)),
-                            ),
-                          ),
+                    child: Text("No Internet"),
+                  ),
+                          Transform.translate(
+                            offset: Offset(0, 350),
+                            child: Container(
+                              color: Colors.white,
+                              child: Column(
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Text("Top"),
+                                    title: Text("Name Team",
+                                        style: TextStyle(
+                                            fontStyle: FontStyle.italic)),
+                                    trailing: Text(
+                                      "TotalSalary",
+                                      style: GoogleFonts.montserrat(
+                                          textStyle: TextStyle(fontSize: 16)),
+                                    ),
+                                  ),
                           Container(
                             color: Colors.black,
                             width: double.infinity,
@@ -187,42 +194,62 @@ class _OverAllState extends State<OverAll> {
                     offset: Offset(0, 420),
                     child: Container(
                       height: 250,
-                      child: ListView.separated(
-                          physics: AlwaysScrollableScrollPhysics(),
-                          separatorBuilder: (BuildContext context, int index) =>
-                              Divider(),
-                          itemCount: totalSalary.length,
-                          itemBuilder: (context, position) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                  color: totalSalary[position].color,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: FlatButton(
-                                onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(
-                                      builder: (context) =>
-                                          GroupTeam(
-                                              totalSalary[position].team)));
-                                },
-                                child: ListTile(
-                                  title: Text(
-                                    " ${totalSalary[position].team}",
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.white),
-                                  ),
-                                  leading: Text("${position + 1}",
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.white),),
-                                  trailing: Text(
-                                    "\$ ${format(
-                                        totalSalary[position].salary)}",
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
+                      child: FutureBuilder(
+                          future: getAllService(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return ListView.separated(
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  separatorBuilder: (BuildContext context,
+                                      int index) =>
+                                      Divider(),
+                                  itemCount: snapshot.data.length,
+                                  itemBuilder: (context, position) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                          color: listAllService[position].color,
+                                          borderRadius: BorderRadius.circular(
+                                              5)),
+                                      child: FlatButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context, MaterialPageRoute(
+                                              builder: (context) =>
+                                                  GroupTeam(
+                                                      listAllService[position]
+                                                          .team)));
+                                        },
+                                        child: ListTile(
+                                          title: Text(
+                                            " ${snapshot.data[position].team}",
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.white),
+                                          ),
+                                          leading: Text("${position + 1}",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white),),
+                                          trailing: Text(
+                                            "\$ ${format(
+                                                listAllService[position]
+                                                    .salary)}",
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  });
+                            }
+                            else {
+                              return Center(
+                                child: CircularProgressIndicator(),);
+                            }
+                          }
+                      ),
                             ),
                           )
                         ]

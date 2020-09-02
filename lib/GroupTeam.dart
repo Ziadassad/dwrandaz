@@ -22,7 +22,7 @@ class _GroupTeamState extends State<GroupTeam> {
 
   ScrollController _controller = ScrollController();
 
-  // String url = "http://192.168.100.224:3000/get";
+  //  String url = "http://192.168.100.230:3000/";
   String url = "http://192.168.100.3:3000/";
 
   var json;
@@ -61,14 +61,6 @@ class _GroupTeamState extends State<GroupTeam> {
     } else {
       return data;
     }
-//    data.add(Data("Team A", "30", "8 / 6 /2020"));
-//    data.add(Data("Team B", "53", "22 / 3 /2020"));
-//    data.add(Data("Team C", "40", "12 / 4 /2020"));
-//    data.add(Data("Team D", "20", "3 / 5 /2020"));
-//    data.add(Data("Team A", "30", "8 / 6 /2020"));
-//    data.add(Data("Team B", "53", "22 / 3 /2020"));
-//    data.add(Data("Team C", "40", "12 / 4 /2020"));
-//    data.add(Data("Team D", "20", "3 / 5 /2020"));
   }
 
   var connectivityResult;
@@ -373,64 +365,6 @@ class _GroupTeamState extends State<GroupTeam> {
         locale: LocaleType.en);
   }
 
-//  Widget itemCard(snapshot) {
-//    return Padding(
-//      padding: const EdgeInsets.fromLTRB(10.0, 120, 10, 10),
-//      child: check == true
-//          ? ListView.builder(
-//              physics: AlwaysScrollableScrollPhysics(),
-//              itemCount: snapshot.data.length,
-//              controller: _controller,
-//              itemBuilder: (context, position) {
-//                DateTime oDate =
-//                    DateTime.parse(snapshot.data[position].date + " 13:27:00");
-//                DateTime sDate = DateTime.parse(startDate);
-//                DateTime eDate = DateTime.parse(endDate);
-//                if (sDate.isBefore(oDate) &&
-//                    eDate.isAfter(oDate) &&
-//                    dropdownValue != 'AllDate') {
-//                  return renderCard(snapshot.data, position);
-//                } else if (dropdownValue == 'AllDate') {
-//                  return renderCard(snapshot.data, position);
-//                }
-//                return Container();
-//              })
-//          : Center(
-//              child: Text("No Internet"),
-//            ),
-//    );
-//  }
-//}
-//
-//renderCard(data, int position) {
-//  return Container(
-//    margin: EdgeInsets.only(top: 10),
-//    height: 100,
-//    width: double.infinity,
-//    decoration: BoxDecoration(
-//        color: colorTeam(data[position].nameTeam),
-//        borderRadius: BorderRadius.circular(16)),
-//    child: Padding(
-//        padding: EdgeInsets.symmetric(horizontal: 20),
-//        child: Column(
-//          crossAxisAlignment: CrossAxisAlignment.start,
-//          mainAxisAlignment: MainAxisAlignment.spaceAround,
-//          children: <Widget>[
-//            Text(
-//              'Team  :  ${data[position].nameTeam}',
-//              style: TextStyle(fontSize: 20),
-//            ),
-//            Text(
-//              'Salary :  \$ ${data[position].salary}',
-//              style: TextStyle(fontSize: 20),
-//            ),
-//            Text(
-//              'Date    :  ${data[position].date}',
-//              style: TextStyle(fontSize: 20),
-//            )
-//          ],
-//        )),
-//  );
 }
 
 colorTeam(String str) {
