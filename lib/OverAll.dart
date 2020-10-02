@@ -139,19 +139,25 @@ class _OverAllState extends State<OverAll> {
                                           fontSize: 15
                                       )
                                   )
-                                ],
-                                defaultRenderer: new charts.ArcRendererConfig(
-                                    arcWidth: 170,
-                                    arcRendererDecorators: [
-                                      new charts.ArcLabelDecorator(
-                                          labelPosition:
-                                          charts.ArcLabelPosition.inside)
-                                    ])),
+                                  ],
+                                  defaultRenderer: new charts.ArcRendererConfig(
+                                      arcWidth: 170,
+                                      arcRendererDecorators: [
+                                        new charts.ArcLabelDecorator(
+                                            labelPosition:
+                                            charts.ArcLabelPosition.inside)
+                                      ])),
+                            ),
+                          )
+                              : Positioned(
+                            left: 140,
+                            top: 200,
+                            child: Column(
+                              children: <Widget>[
+                                Text("No Data Found"),
+                              ],
+                            ),
                           ),
-                  )
-                      : Center(
-                    child: Text("No Internet"),
-                  ),
                           Transform.translate(
                             offset: Offset(0, 350),
                             child: Container(
@@ -169,35 +175,38 @@ class _OverAllState extends State<OverAll> {
                                           textStyle: TextStyle(fontSize: 16)),
                                     ),
                                   ),
-                          Container(
-                            color: Colors.black,
-                            width: double.infinity,
-                            height: 1,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                                  Container(
+                                    color: Colors.black,
+                                    width: double.infinity,
+                                    height: 1,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
 
-                  Transform.translate(
-                    offset: Offset(0, 420),
-                    child: Container(
-                      height: 250,
-                      child: FutureBuilder(
-                          future: getAllService(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              return ListView.separated(
-                                  physics: AlwaysScrollableScrollPhysics(),
-                                  separatorBuilder: (BuildContext context,
-                                      int index) => Divider(),
-                                  itemCount: snapshot.data.length,
-                                  itemBuilder: (context, position) {
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.blue,
-                                          borderRadius: BorderRadius.circular(
+                          Transform.translate(
+                            offset: Offset(0, 420),
+                            child: Container(
+                              height: 250,
+                              child: FutureBuilder(
+                                  future: getAllService(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done &&
+                                        !snapshot.hasError) {
+                                      return ListView.separated(
+                                          physics: AlwaysScrollableScrollPhysics(),
+                                          separatorBuilder: (
+                                              BuildContext context,
+                                              int index) => Divider(),
+                                          itemCount: snapshot.data.length,
+                                          itemBuilder: (context, position) {
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.blue,
+                                                  borderRadius: BorderRadius
+                                                      .circular(
                                               5)),
                                       child: FlatButton(
                                         onPressed: () {
@@ -228,27 +237,30 @@ class _OverAllState extends State<OverAll> {
                                           ),
                                         ),
                                       ),
-                                    );
-                                  });
-                            }
-                            if (snapshot.hasError || snapshot.connectionState ==
-                                ConnectionState.none) {
-                              return Container();
-                            }
-                            else {
-                              return Center(
-                                child: CircularProgressIndicator(),);
-                            }
-                          }
-                      ),
-                    ),
-                  )
+                                            );
+                                          });
+                                    }
+                                    else if (snapshot.hasError ||
+                                        snapshot.connectionState ==
+                                            ConnectionState.none) {
+                                      return Container(child: Center(
+                                        child: Text("No Data Found"),),);
+                                    }
+                                    else {
+                                      return Center(
+                                        child: CircularProgressIndicator(),);
+                                    }
+                                  }
+                              ),
+                            ),
+                          )
                         ]
                     )
                 ),
               );
             }
-            if (snapshot.connectionState == ConnectionState.none) {
+            if (snapshot.connectionState == ConnectionState.none ||
+                snapshot.hasError) {
               return Container(child: Center(child: Text("No Data Found")),);
             }
             else {

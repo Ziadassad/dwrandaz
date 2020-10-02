@@ -51,13 +51,11 @@ class _SignInState extends State<Signin> {
     var json = jsonDecode(result.body);
     if (json['success']) {
       var userAccount = json['user'];
-      print(userAccount['name']);
       admin[0] = userAccount['name'];
       admin[1] = userAccount['email'];
-      print(json['token']);
       token = json['token'];
       setState(() {
-        print("yes");
+       // print("yes");
         login = true;
       });
     }
@@ -280,34 +278,51 @@ class _SignInState extends State<Signin> {
                               color: Colors.blue[800],
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: FlatButton(
-                              child: Text(
-                                'CONTINUE',
-                                style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 15,
-                                  color: const Color(0xffffffff),
-                                  fontWeight: FontWeight.w700,
-                                  height: 0.8,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  signin();
-                                  if (check) {
-                                    sharedPreferences.setBool("login", true);
-                                    sharedPreferences.setStringList(
-                                        "account", admin);
-                                    sharedPreferences.setString("token", token);
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                        MaterialPageRoute(
-                                            builder: (context) => MainApp()),
-                                            (Route<dynamic> route) => false);
+                            child: FutureBuilder(
+                                future: signin(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                          ConnectionState.done &&
+                                      !snapshot.hasError) {
+                                    return FlatButton(
+                                      child: Text(
+                                        'CONTINUE',
+                                        style: TextStyle(
+                                          fontFamily: 'Arial',
+                                          fontSize: 15,
+                                          color: const Color(0xffffffff),
+                                          fontWeight: FontWeight.w700,
+                                          height: 0.8,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      onPressed: () {
+                                        // print(snapshot.data);
+                                        setState(() {
+                                          if (snapshot.data) {
+                                            sharedPreferences.setBool(
+                                                "login", true);
+                                            sharedPreferences.setStringList(
+                                                "account", admin);
+                                            sharedPreferences.setString(
+                                                "token", token);
+                                            Navigator.of(context)
+                                                .pushAndRemoveUntil(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            MainApp()),
+                                                    (Route<dynamic> route) =>
+                                                        false);
+                                          }
+                                        });
+                                      },
+                                    );
+                                  } else {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
                                   }
-                                });
-                              },
-                            ),
+                                }),
                           ),
                         ],
                       ),
@@ -327,17 +342,19 @@ class _SignInState extends State<Signin> {
 
   signin() async {
     bool checkInternet = await connection();
-    setState(() {
       postAuth();
       if (checkInternet) {
+        print(login);
         if (login) {
           check = true;
+          return true;
         }
       } else {
         message('please check your internet connection');
         check = false;
+        return false;
       }
-    });
+    return false;
   }
 
   void message(String message) {
