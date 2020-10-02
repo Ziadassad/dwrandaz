@@ -23,14 +23,12 @@ class _GroupTeamState extends State<GroupTeam> {
 
   ScrollController _controller = ScrollController();
 
-  //  String url = "http://192.168.100.230:3000/";
   String url = "http://192.168.100.3:3000/";
 
   var json;
   bool isLoad = true;
 
   Future refresh() async {
-    print(url + widget.nameTeam);
     filter.clear();
     data.clear();
 

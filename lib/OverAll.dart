@@ -194,7 +194,6 @@ class _OverAllState extends State<OverAll> {
                                       int index) => Divider(),
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (context, position) {
-                                    print(snapshot.data[position].team);
                                     return Container(
                                       decoration: BoxDecoration(
                                           color: Colors.blue,
