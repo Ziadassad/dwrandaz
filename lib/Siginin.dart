@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:dwrandaz/MainApp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Signin extends StatefulWidget {
@@ -15,6 +18,8 @@ class _SignInState extends State<Signin> {
   SharedPreferences sharedPreferences;
   String email;
   String password;
+
+  List<String> admin = ["", ""];
 
   TextEditingController textEmail = TextEditingController();
   TextEditingController textPassword = TextEditingController();
@@ -33,6 +38,34 @@ class _SignInState extends State<Signin> {
     } else {
       return false;
     }
+  }
+
+  String url = "https://eshukar.herokuapp.com/api/v1/auth/admin/login";
+  String token = "";
+
+  Future<bool> postAuth() async {
+    Map map = tomap();
+    var data = jsonEncode(map);
+    var result = await http
+        .post(url, body: data, headers: {"Content-Type": "application/json"});
+    var json = jsonDecode(result.body);
+    if (json['success']) {
+      var userAccount = json['user'];
+      print(userAccount['name']);
+      admin[0] = userAccount['name'];
+      admin[1] = userAccount['email'];
+      print(json['token']);
+      token = json['token'];
+      setState(() {
+        print("yes");
+        login = true;
+      });
+    }
+  }
+
+  Map<String, dynamic> tomap() {
+    Map map = <String, dynamic>{'email': email, 'password': password};
+    return map;
   }
 
   @override
@@ -262,13 +295,15 @@ class _SignInState extends State<Signin> {
                               onPressed: () {
                                 setState(() {
                                   signin();
-                                  print(check);
                                   if (check) {
                                     sharedPreferences.setBool("login", true);
+                                    sharedPreferences.setStringList(
+                                        "account", admin);
+                                    sharedPreferences.setString("token", token);
                                     Navigator.of(context).pushAndRemoveUntil(
                                         MaterialPageRoute(
                                             builder: (context) => MainApp()),
-                                        (Route<dynamic> route) => false);
+                                            (Route<dynamic> route) => false);
                                   }
                                 });
                               },
@@ -288,17 +323,15 @@ class _SignInState extends State<Signin> {
   }
 
   bool check = false;
+  bool login = false;
 
   signin() async {
-    bool ch = await connection();
+    bool checkInternet = await connection();
     setState(() {
-      // ignore: unrelated_type_equality_checks
-      if (ch) {
-        if (email == "dwrandaz" && password == "dwrandaz") {
+      postAuth();
+      if (checkInternet) {
+        if (login) {
           check = true;
-        } else {
-          message('sign in field maybe your account incorrect');
-          check = false;
         }
       } else {
         message('please check your internet connection');

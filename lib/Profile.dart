@@ -14,6 +14,22 @@ class _ProfileState extends State<Profile> {
 
   getShared() async {
     sharedPreferences = await SharedPreferences.getInstance();
+    List<String> list = sharedPreferences.getStringList("account");
+    print(list[0]);
+    setState(() {
+      name = list[0];
+      email = list[1];
+    });
+  }
+
+  String name = "";
+  String email = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getShared();
+    super.initState();
   }
 
   @override
@@ -41,13 +57,13 @@ class _ProfileState extends State<Profile> {
               height: 20,
             ),
             Text(
-              "company : dwarandaz",
+              " ${name}",
               style: TextStyle(fontStyle: FontStyle.italic, fontSize: 30),
             ),
             SizedBox(
               height: 30,
             ),
-            Text("email  :  dwrandaz2020@gmail.com"),
+            Text("  ${email}", style: TextStyle(fontSize: 20),),
             SizedBox(
               height: 200,
             ),

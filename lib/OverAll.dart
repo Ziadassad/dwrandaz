@@ -1,12 +1,12 @@
-import 'dart:convert';
-
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:connectivity/connectivity.dart';
 import 'package:dwrandaz/GroupTeam.dart';
+import 'package:dwrandaz/http/Http.dart';
+import 'package:dwrandaz/model/Service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OverAll extends StatefulWidget {
   @override
@@ -14,83 +14,64 @@ class OverAll extends StatefulWidget {
 }
 
 class _OverAllState extends State<OverAll> {
-  List<charts.Series<Task, String>> _seriesPieData;
+  SharedPreferences sharedPreferences;
 
-  // String url = "http://192.168.100.230:3000/getOverAll";
-  String url = "http://192.168.100.3:3000/";
+  List<charts.Series<Service, String>> _seriesPieData;
+  var connectivityResult;
+  bool check = false;
 
-  List<Task> list = [];
-  List<Task> listAllService = [];
-  List<Task> pieData;
+  List<Service> list = [];
+  List<Service> listAllService = [];
 
-  double salaryTeamA = 0;
-  double salaryTeamB = 0;
-  double salaryTeamC = 0;
-  double salaryTeamD = 0;
+  List colors = [
+    Color(0xff3366cc),
+    Color(0xff990099),
+    Color(0xff109618),
+    Color(0xfffdbe19)
+  ];
 
-  int reqA = 0;
-  int reqB = 0;
-  int reqC = 0;
-  int reqD = 0;
+  String token = "";
 
   Future _generateData() async {
-    reqA = 0;
-    reqB = 0;
-    reqC = 0;
-    reqD = 0;
-    var result = await http.get(url + "getOverAll");
-    var json = jsonDecode(result.body) as List<dynamic>;
-    json.forEach((element) {
-      list.add(
-          Task(element['name'], double.parse(element['req']), Colors.white));
+    List data = await Http().httpGetRequest(token);
+
+    int i = 0;
+    data.forEach((element) {
+      list.add(Service(
+          element['name'].toString(), element['percentage'], colors[i]));
+      i++;
     });
-
-//    double A = (reqA / json.length) * 100;
-//    double B = (reqB / json.length) * 100;
-//    double C = (reqC / json.length) * 100;
-//    double D = (reqD / json.length) * 100;
-//    A = num.parse(A.toStringAsFixed(1));
-//    B = num.parse(B.toStringAsFixed(1));
-//    C = num.parse(C.toStringAsFixed(1));
-//    D = num.parse(D.toStringAsFixed(1));
-
-    pieData = [
-      new Task(list[0].team, list[0].salary, Color(0xff3366cc)),
-      new Task(list[1].team, list[1].salary, Color(0xff990099)),
-      new Task(list[2].team, list[2].salary, Color(0xff109618)),
-      new Task(list[3].team, list[3].salary, Color(0xfffdbe19)),
-    ];
 
     _seriesPieData.add(
       charts.Series(
-        domainFn: (Task task, _) => task.team,
-        measureFn: (Task task, _) => task.salary,
-        colorFn: (Task task, _) => charts.ColorUtil.fromDartColor(task.color),
+        domainFn: (Service Service, _) => Service.team,
+        measureFn: (Service Service, _) => Service.salary,
+        colorFn: (Service Service, _) =>
+            charts.ColorUtil.fromDartColor(Service.color),
         id: 'Air Pollution',
-        data: pieData,
-        labelAccessorFn: (Task row, _) => '\% ${row.salary}',
+        data: list,
+        labelAccessorFn: (Service row, _) => '\% ${row.salary}',
       ),
     );
-
     return _seriesPieData;
   }
 
   getAllService() async {
-    var resultAll = await http.get(url + "getService");
-    var jsonAll = jsonDecode(resultAll.body) as List<dynamic>;
-    jsonAll.forEach((element) {
-//      print(element);
-      listAllService.add(Task(
-          element['name'], double.parse(element['salary']), Colors.lightBlue));
+    List data = [];
+    data = await Http().httpTopTeams(token);
+
+    // print(data);
+    data.forEach((element) {
+      listAllService.add(
+          Service(element['name'], element['sum'], Color(0x000000)));
     });
-    Comparator<Task> sortBySalary = (a, b) => a.salary.compareTo(b.salary);
+
+    Comparator<Service> sortBySalary = (a, b) => a.salary.compareTo(b.salary);
     listAllService.sort(sortBySalary);
     listAllService = listAllService.reversed.toList();
+
     return listAllService;
   }
-
-  var connectivityResult;
-  bool check = false;
 
   connection() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -102,12 +83,20 @@ class _OverAllState extends State<OverAll> {
     }
   }
 
+  getToken() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    setState(() {
+      token = sharedPreferences.getString("token");
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getToken();
     connection();
-    _seriesPieData = List<charts.Series<Task, String>>();
+    _seriesPieData = List<charts.Series<Service, String>>();
   }
 
 
@@ -133,7 +122,7 @@ class _OverAllState extends State<OverAll> {
                               borderRadius: BorderRadius.circular(12)),
                           height: 350,
                           child: Expanded(
-                            child: charts.PieChart(_seriesPieData,
+                            child: charts.PieChart(snapshot.data,
                                 animate: true,
                                 animationDuration: Duration(milliseconds: 700),
                                 behaviors: [
@@ -202,13 +191,13 @@ class _OverAllState extends State<OverAll> {
                               return ListView.separated(
                                   physics: AlwaysScrollableScrollPhysics(),
                                   separatorBuilder: (BuildContext context,
-                                      int index) =>
-                                      Divider(),
+                                      int index) => Divider(),
                                   itemCount: snapshot.data.length,
                                   itemBuilder: (context, position) {
+                                    print(snapshot.data[position].team);
                                     return Container(
                                       decoration: BoxDecoration(
-                                          color: listAllService[position].color,
+                                          color: Colors.blue,
                                           borderRadius: BorderRadius.circular(
                                               5)),
                                       child: FlatButton(
@@ -217,7 +206,7 @@ class _OverAllState extends State<OverAll> {
                                               context, MaterialPageRoute(
                                               builder: (context) =>
                                                   GroupTeam(
-                                                      listAllService[position]
+                                                      snapshot.data[position]
                                                           .team)));
                                         },
                                         child: ListTile(
@@ -232,9 +221,8 @@ class _OverAllState extends State<OverAll> {
                                                 fontSize: 18,
                                                 color: Colors.white),),
                                           trailing: Text(
-                                            "\$ ${format(
-                                                listAllService[position]
-                                                    .salary)}",
+                                            "\$ ${listAllService[position]
+                                                .salary}",
                                             style: TextStyle(
                                                 fontSize: 20,
                                                 color: Colors.white),
@@ -244,35 +232,32 @@ class _OverAllState extends State<OverAll> {
                                     );
                                   });
                             }
+                            if (snapshot.hasError || snapshot.connectionState ==
+                                ConnectionState.none) {
+                              return Container();
+                            }
                             else {
                               return Center(
                                 child: CircularProgressIndicator(),);
                             }
                           }
                       ),
-                            ),
-                          )
+                    ),
+                  )
                         ]
                     )
                 ),
               );
             }
-            return Center(child: CircularProgressIndicator(),);
+            if (snapshot.connectionState == ConnectionState.none) {
+              return Container(child: Center(child: Text("No Data Found")),);
+            }
+            else {
+              return Center(child: CircularProgressIndicator(),);
+            }
           }
       ),
     );
   }
-
-  String format(double n) {
-    return n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 2);
-  }
 }
 
-
-class Task {
-  String team;
-  double salary;
-  Color color;
-
-  Task(this.team, this.salary, this.color);
-}

@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
-import 'package:dwrandaz/Data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:http/http.dart' as http;
+
+import 'file:///C:/Users/snap%20shot/Desktop/dwrandaz/lib/model/Data.dart';
 
 class GroupTeam extends StatefulWidget {
   final String nameTeam;
@@ -364,23 +365,6 @@ class _GroupTeamState extends State<GroupTeam> {
         currentTime: DateTime.now(),
         locale: LocaleType.en);
   }
-
 }
 
-colorTeam(String str) {
-  switch (str) {
-    case "Team A":
-      return Colors.redAccent;
-      break;
-    case "Team B":
-      return Colors.yellow;
-      break;
-    case "Team C":
-      return Colors.cyan;
-      break;
-    case "Team D":
-      return Colors.green;
-      break;
-  }
-}
 
